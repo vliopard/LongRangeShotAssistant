@@ -1,0 +1,25 @@
+<resources>
+    <string name="app_name">Automatic Aim Crosshair</string>
+    <string name="more">+</string>
+    <string name="less">-</string>
+    <string name="angle">°</string>
+    <string name="no_description">No Description</string>
+    <string name="inclination">[%1$.2f°]</string>
+    <string name="settings">Settings</string>
+    <string name="cancel">Cancel</string>
+    <string name="confirm">Confirm</string>
+    <string name="gravity">Gravity</string>
+    <string name="acceleration">Acceleration</string>
+    <string name="max_sample_size">5</string>
+    <string name="arrow_velocity">48</string>
+    <string name="person_height">1.6</string>
+    <string name="arrow_diameter">0.0065</string>
+    <string name="arrow_mass">0.009</string>
+    <string name="lens_factor">100</string>
+    <string name="lens_adjust_factor">LENS ADJUST FACTOR</string>
+    <string name="arrow_mass_weight_kg">ARROW MASS - WEIGHT (kg)</string>
+    <string name="arrow_diameter_m">ARROW DIAMETER (m)</string>
+    <string name="eyes_sight_height_m">EYES SIGHT HEIGHT (m)</string>
+    <string name="arrow_initial_velocity_m_s">ARROW INITIAL VELOCITY (m/s)</string>
+    <string name="sensor_max_samples">SENSOR MAX SAMPLES</string>
+</resources>

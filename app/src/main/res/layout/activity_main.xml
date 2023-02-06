@@ -1,0 +1,185 @@
+<!--android:layout_marginTop="-385dp"-->
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main_layout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="horizontal"
+        tools:ignore="UselessParent">
+
+        <RelativeLayout
+            android:layout_width="35dp"
+            android:layout_height="match_parent"
+            android:background="@color/black">
+
+            <Button
+                android:id="@+id/bt_zoom_up"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentTop="true"
+                android:text="@string/more" />
+
+            <com.lukelorusso.verticalseekbar.VerticalSeekBar
+                android:id="@+id/zoomSeekBar"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_above="@id/bt_zoom_down"
+                android:layout_below="@id/bt_zoom_up"
+                android:layout_gravity="center"
+                app:vsb_bar_background="@color/black"
+                app:vsb_bar_progress_gradient_end="@color/gray"
+                app:vsb_bar_progress_gradient_start="@color/gray"
+                app:vsb_click_to_set_progress="true"
+                app:vsb_show_thumb="true"
+                app:vsb_thumb_container_tint="@color/placeholderBackground"
+                app:vsb_thumb_placeholder_src="@drawable/seekbar_zoom"
+                app:vsb_use_thumb_to_set_progress="true" />
+
+            <Button
+                android:id="@+id/bt_zoom_down"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:text="@string/less" />
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="35dp"
+            android:layout_height="match_parent"
+            android:background="@color/black">
+
+            <Button
+                android:id="@+id/bt_dist_up"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentTop="true"
+                android:text="@string/more" />
+
+            <com.lukelorusso.verticalseekbar.VerticalSeekBar
+                android:id="@+id/distanceSeekBar"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_above="@id/bt_dist_down"
+                android:layout_below="@id/bt_dist_up"
+                android:layout_gravity="center"
+                app:vsb_bar_background="@color/black"
+                app:vsb_bar_progress_gradient_end="@color/gray"
+                app:vsb_bar_progress_gradient_start="@color/gray"
+                app:vsb_click_to_set_progress="true"
+                app:vsb_show_thumb="true"
+                app:vsb_thumb_container_tint="@color/placeholderBackground"
+                app:vsb_thumb_placeholder_src="@drawable/seekbar_distance"
+                app:vsb_use_thumb_to_set_progress="true" />
+
+            <Button
+                android:id="@+id/bt_dist_down"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:text="@string/less" />
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <androidx.camera.view.PreviewView
+                android:id="@+id/camera_preview"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+            </androidx.camera.view.PreviewView>
+
+            <Button
+                android:id="@+id/settings"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:text="@string/settings"
+                tools:ignore="RelativeOverlap" />
+
+            <TextView
+                android:id="@+id/inclination_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@color/black"
+                android:text="@string/angle"
+                android:textAlignment="center"
+                android:textColor="@color/white"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                tools:ignore="RtlCompat" />
+
+            <ImageView
+                android:id="@+id/camera_background_image"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:contentDescription="@string/no_description"
+                app:srcCompat="@drawable/target_roll" />
+
+            <RelativeLayout
+                android:id="@+id/rotate_layout"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:alpha="1">
+
+                <ImageView
+                    android:id="@+id/aim_level_image"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:contentDescription="@string/no_description"
+                    app:srcCompat="@drawable/target_gauge" />
+
+                <ImageView
+                    android:id="@+id/target_x_image"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:contentDescription="@string/no_description"
+                    app:srcCompat="@drawable/target_aim_reticle" />
+
+                <ImageView
+                    android:id="@+id/imageViewRed"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:contentDescription="@string/no_description"
+                    app:srcCompat="@drawable/target_aim_red" />
+
+                <ImageView
+                    android:id="@+id/imageViewBlue"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:contentDescription="@string/no_description"
+                    app:srcCompat="@drawable/target_aim_blue" />
+
+                <ImageView
+                    android:id="@+id/imageViewGreen"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:contentDescription="@string/no_description"
+                    app:srcCompat="@drawable/target_aim_green" />
+
+                <ImageView
+                    android:id="@+id/im_pitch"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:contentDescription="@string/no_description"
+                    app:srcCompat="@drawable/transparent_background" />
+            </RelativeLayout>
+        </RelativeLayout>
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        tools:ignore="UselessParent">
+        <SurfaceView
+            android:id="@+id/sv_pitch"
+            android:layout_width="1dp"
+            android:layout_height="1dp"
+            />
+    </LinearLayout>
+</RelativeLayout>

@@ -1,0 +1,206 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/black">
+
+    <EditText
+        android:id="@+id/sensor_max_samples"
+        android:layout_width="340dp"
+        android:layout_height="60dp"
+        android:layout_marginStart="12dp"
+        android:autofillHints="SENSOR MAX SAMPLES"
+        android:ems="10"
+        android:inputType="numberSigned"
+        android:minHeight="48dp"
+        android:text="@string/max_sample_size"
+        android:textAlignment="viewEnd"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:ignore="LabelFor" />
+
+    <EditText
+        android:id="@+id/arrow_velocity"
+        android:layout_width="340dp"
+        android:layout_height="60dp"
+        android:layout_marginStart="12dp"
+        android:autofillHints="STARTING VELOCITY"
+        android:ems="10"
+        android:inputType="numberDecimal"
+        android:minHeight="48dp"
+        android:text="@string/arrow_velocity"
+        android:textAlignment="viewEnd"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/sensor_max_samples"
+        tools:ignore="LabelFor" />
+
+    <EditText
+        android:id="@+id/person_height"
+        android:layout_width="340dp"
+        android:layout_height="60dp"
+        android:layout_marginStart="12dp"
+        android:autofillHints="USER HEIGHT IN METERS"
+        android:ems="10"
+        android:inputType="numberDecimal"
+        android:minHeight="48dp"
+        android:text="@string/person_height"
+        android:textAlignment="viewEnd"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/arrow_velocity"
+        tools:ignore="LabelFor" />
+
+    <EditText
+        android:id="@+id/arrow_diameter"
+        android:layout_width="340dp"
+        android:layout_height="60dp"
+        android:layout_marginStart="12dp"
+        android:autofillHints="ARROW DIAMETER"
+        android:ems="10"
+        android:inputType="numberDecimal"
+        android:textAlignment="viewEnd"
+        tools:ignore="LabelFor"
+        android:minHeight="48dp"
+        android:text="@string/arrow_diameter"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/person_height" />
+
+    <EditText
+        android:id="@+id/arrow_mass"
+        android:layout_width="340dp"
+        android:layout_height="60dp"
+        android:layout_marginStart="12dp"
+        android:autofillHints="ARROW MASS IN KILOGRAMS"
+        android:ems="10"
+        android:inputType="numberDecimal"
+        android:minHeight="48dp"
+        android:text="@string/arrow_mass"
+        android:textAlignment="viewEnd"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/arrow_diameter"
+        tools:ignore="LabelFor" />
+
+    <Switch
+        android:id="@+id/acceleration_formulas"
+        android:layout_width="152dp"
+        android:layout_height="59dp"
+        android:layout_marginStart="12dp"
+        android:text="@string/acceleration"
+        android:thumbTint="@color/gray"
+        android:trackTint="@color/white"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/arrow_mass" />
+
+    <Switch
+        android:id="@+id/gravity_formulas"
+        android:layout_width="96dp"
+        android:layout_height="59dp"
+        android:layout_marginStart="92dp"
+        android:text="@string/gravity"
+        android:thumbTint="@color/gray"
+        android:trackTint="@color/white"
+        app:layout_constraintStart_toEndOf="@+id/acceleration_formulas"
+        app:layout_constraintTop_toBottomOf="@+id/arrow_mass" />
+
+    <EditText
+        android:id="@+id/lens_factor"
+        android:layout_width="340dp"
+        android:layout_height="60dp"
+        android:layout_marginStart="12dp"
+
+        android:autofillHints="LENS ADJUST FACTOR"
+        android:ems="10"
+        android:textAlignment="viewEnd"
+        android:inputType="numberDecimal"
+        tools:ignore="LabelFor"
+        android:minHeight="48dp"
+        android:text="@string/lens_factor"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/acceleration_formulas" />
+
+    <Button
+        android:id="@+id/confirm"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="10dp"
+        android:layout_marginBottom="2dp"
+        android:text="@string/confirm"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/cancel" />
+
+    <Button
+        android:id="@+id/cancel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="2dp"
+        android:layout_marginBottom="2dp"
+        android:text="@string/cancel"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <ImageView
+        android:id="@+id/imageView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="50dp"
+        android:contentDescription="@string/no_description"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:srcCompat="@drawable/settings_logo" />
+
+    <TextView
+        android:id="@+id/sensor_max_values"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/sensor_max_samples"
+        android:textColor="#DDDDDD"
+        app:layout_constraintStart_toStartOf="@+id/sensor_max_samples"
+        app:layout_constraintTop_toTopOf="@+id/sensor_max_samples" />
+
+    <TextView
+        android:id="@+id/arrow_speed"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/arrow_initial_velocity_m_s"
+        android:textColor="#DDDDDD"
+        app:layout_constraintStart_toStartOf="@+id/arrow_velocity"
+        app:layout_constraintTop_toBottomOf="@+id/sensor_max_samples" />
+
+    <TextView
+        android:id="@+id/eye_height"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/eyes_sight_height_m"
+        android:textColor="#DDDDDD"
+        app:layout_constraintStart_toStartOf="@+id/person_height"
+        app:layout_constraintTop_toTopOf="@+id/person_height" />
+
+    <TextView
+        android:id="@+id/arrow_diameter_cm"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/arrow_diameter_m"
+        android:textColor="#DDDDDD"
+        app:layout_constraintStart_toStartOf="@+id/arrow_diameter"
+        app:layout_constraintTop_toBottomOf="@+id/person_height" />
+
+    <TextView
+        android:id="@+id/arrow_mass_kg"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/arrow_mass_weight_kg"
+        android:textColor="#DDDDDD"
+        app:layout_constraintStart_toStartOf="@+id/arrow_mass"
+        app:layout_constraintTop_toTopOf="@+id/arrow_mass" />
+
+    <TextView
+        android:id="@+id/lens_adjust"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/lens_adjust_factor"
+        android:textColor="#DDDDDD"
+        app:layout_constraintStart_toStartOf="@+id/lens_factor"
+        app:layout_constraintTop_toTopOf="@+id/lens_factor" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

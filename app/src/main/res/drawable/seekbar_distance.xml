@@ -1,0 +1,16 @@
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/chargingIconLeftDistance"
+        android:drawable="@drawable/number99"
+        android:top="0dp"
+        android:left="0dp"
+        android:height="12dp"
+        android:width="12dp" />
+    <item
+        android:id="@+id/chargingIconRightDistance"
+        android:drawable="@drawable/number99"
+        android:top="0dp"
+        android:left="12dp"
+        android:height="12dp"
+        android:width="12dp" />
+</layer-list>
