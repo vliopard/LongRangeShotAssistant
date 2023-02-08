@@ -5,7 +5,6 @@ import static java.lang.Math.cos;
 import static java.lang.Math.pow;
 import static java.lang.Math.sin;
 import static java.lang.Math.toRadians;
-import static java.lang.StrictMath.tan;
 import static java.lang.StrictMath.atan;
 import static java.lang.StrictMath.sqrt;
 
@@ -15,21 +14,15 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 
-import android.graphics.Matrix;
-import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.LayerDrawable;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
-import android.hardware.camera2.CameraAccessException;
-import android.hardware.camera2.CameraCharacteristics;
-import android.hardware.camera2.CameraManager;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.StrictMode;
-import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
@@ -81,6 +74,8 @@ import java.util.concurrent.atomic.AtomicReference;
 import org.otdshco.gauges.Takeoff;
 import org.otdshco.gauges.Params;
 
+//  d = (1/2) * (9.8 m/s²) * (30 m / 107 m/s)² = 0.38 m
+
 public class MainActivity extends AppCompatActivity implements SensorEventListener
 {
     private final List<Double>[] rollingAverage = new List[3];
@@ -98,19 +93,16 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     private VerticalSeekBar verticalSeekBarZoom;
 
     private float general_progress = 0;
-    private float targetDistanceValue = 10;
+    public static volatile float targetDistanceValue = 10;
     private VerticalSeekBar verticalSeekBarTargetDistance;
 
     private RelativeLayout RelativeLayoutForRotation;
 
-    private ImageView imageViewRed;
-    private ImageView imageViewGreen;
-    private ImageView imageViewBlue;
     private ImageView imageViewHorizonLine;
 
     private TextView textViewForInclinationAngle;
 
-    private double inclination_angle = 0;
+    public static volatile double inclination_angle = 0;
 
     private int back_button_press = 0;
 
@@ -119,12 +111,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     private int MAX_SAMPLE_SIZE = 5;
     private float arrow_velocity_settings = 48;
 
-    private float settings_eye_height_mt = 1.6F;
-
-    private final float lens_size_mt_zoom = 0.5F; // TODO: MUST CHECK WHAT IS THE SIZE IN ZOOM
-    private final float lens_size_mt = 2.11F;     // TODO: MUST CHANGE TO WHOLE SCREEN DISTANCE = 1.74
-
-    private final float screenHeightInCm = 16;
+    public static volatile float mt_settings_eye_height = 1.6F;
 
     private int image_view_height = 0;
 
@@ -136,6 +123,11 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
     public static volatile Params hudParams = new Params( );
     public static volatile float headPitch = 0.0f;
+    public static volatile double red_aim;
+    public static volatile double green_aim;
+    public static volatile double blue_aim;
+    public static volatile int sWidth = 600;
+    public static volatile int sHeight = 1280;
 
     // Based on a measured estimate of the pitch attitude of the FRL of 5 deg and 4.32 deg of Bosch
     public static final float headPitchBias = 0f; // degrees
@@ -193,7 +185,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         SharedPreferences settings = getSharedPreferences( "environment_settings", MODE_PRIVATE );
         MAX_SAMPLE_SIZE = settings.getInt( "sensor_max_samples", 5 );
         arrow_velocity_settings = settings.getFloat( "arrow_velocity", 48 );
-        settings_eye_height_mt = settings.getFloat( "person_height", 1.6F );
+        mt_settings_eye_height = settings.getFloat( "person_height", 1.6F );
         settingsArrowDiameter = settings.getFloat( "arrow_diameter", 0.0065F );
         settingsArrowMass = settings.getFloat( "arrow_mass", 0.009F );
         settingsAccelerationFormulas = settings.getBoolean( "acceleration_formulas", true );
@@ -209,7 +201,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         int dez = ( progress % 100 ) / 10;
         int uni = ( progress % 100 ) % 10;
 
-        LayerDrawable bgDrawable = ( LayerDrawable ) getResources( ).getDrawable( drawablePlaceHolder, this.getTheme() );
+        @SuppressLint ( "UseCompatLoadingForDrawables" ) LayerDrawable bgDrawable = ( LayerDrawable ) getResources( ).getDrawable( drawablePlaceHolder, this.getTheme( ) );
 
         int pos0;
         if ( cen == 1 )
@@ -220,7 +212,8 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         {
             pos0 = getPos( dez );
         }
-        Drawable replace0 = getResources( ).getDrawable( pos0, this.getTheme() );
+
+        @SuppressLint ( "UseCompatLoadingForDrawables" ) Drawable replace0 = getResources( ).getDrawable( pos0, this.getTheme( ) );
         bgDrawable.setDrawableByLayerId( tens, replace0 );
 
         int pos1;
@@ -232,12 +225,13 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         {
             pos1 = getPos( uni );
         }
-        Drawable replace1 = getResources( ).getDrawable( pos1, this.getTheme() );
+
+        @SuppressLint ( "UseCompatLoadingForDrawables" ) Drawable replace1 = getResources( ).getDrawable( pos1, this.getTheme( ) );
         bgDrawable.setDrawableByLayerId( ones, replace1 );
         seekBar.setThumbPlaceholderDrawable( bgDrawable );
     }
 
-    @SuppressLint ( "WrongViewCast" )
+    @SuppressLint ( { "WrongViewCast", "UseCompatLoadingForDrawables", "ClickableViewAccessibility" } )
     @Override
     protected void onCreate( Bundle savedInstanceState )
     {
@@ -260,9 +254,6 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         mPreviewView = findViewById( R.id.camera_preview );
         RelativeLayoutForRotation = findViewById( R.id.rotate_layout );
 
-        imageViewRed = findViewById( R.id.imageViewRed );
-        imageViewGreen = findViewById( R.id.imageViewGreen );
-        imageViewBlue = findViewById( R.id.imageViewBlue );
         imageViewHorizonLine = findViewById( R.id.aim_level_image );
 
         textViewForInclinationAngle = findViewById( R.id.inclination_text );
@@ -275,7 +266,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         verticalSeekBarZoom = findViewById( R.id.zoomSeekBar );
         verticalSeekBarTargetDistance = findViewById( R.id.distanceSeekBar );
 
-        verticalSeekBarTargetDistance.setThumbPlaceholderDrawable( getResources( ).getDrawable( R.drawable.seekbar_distance, this.getTheme() ) );
+        verticalSeekBarTargetDistance.setThumbPlaceholderDrawable( getResources( ).getDrawable( R.drawable.seekbar_distance, this.getTheme( ) ) );
 
         rollingAverage[0] = new ArrayList<>( );
         rollingAverage[1] = new ArrayList<>( );
@@ -606,27 +597,18 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             RelativeLayoutForRotation.setRotation( Math.round( x ) );
 
             RelativeLayout.LayoutParams params = ( RelativeLayout.LayoutParams ) imageViewHorizonLine.getLayoutParams( );
-            inclination_angle = ( int ) Math.round( -z );
+            //inclination_angle = ( int ) Math.round( -z );
+            inclination_angle = -z;
             textViewForInclinationAngle.setText( String.format( getResources( ).getString( R.string.inclination ), -z ) );
 
             if ( image_view_height == 0 )
             {
-                image_view_height = customGetIntrinsicHeight( imageViewHorizonLine );
+                image_view_height = Tools.customGetIntrinsicHeight( imageViewHorizonLine );
             }
 
-            // h = tan( ( inclination_angle ) * PI / 180 ) * 0.395;
-            // px = convert_from_cm_to_px( h ) * screenHeightInCm / ( tan( 60 * PI / 180 ) * 0.395 );
+            float iy = getHorizonLine( );
 
-            float OVERALL_VALUE = 12.f;
-            float PIXELS_PER_DEGREE = 715F / ( 23F * 9F / 16F );
-            float GAUGE_HEIGHT = OVERALL_VALUE * PIXELS_PER_DEGREE;
-            float UNITS_PER_PIXEL = OVERALL_VALUE / GAUGE_HEIGHT;
-            float latherY = ( float ) Math.sin( Math.toRadians( 90 ) );
-
-            float pixelsAway = (- headPitch) / UNITS_PER_PIXEL;
-            float iy = -latherY * pixelsAway;
-
-            params.topMargin = ( int ) (iy);
+            params.topMargin = ( int ) ( iy );
             imageViewHorizonLine.setLayoutParams( params );
 
             shot( );
@@ -670,29 +652,6 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
     }
 
-    private int convert_from_cm_to_px( double cm )
-    {
-        return ( int ) ( cm * scrHeight( ) / screenHeightInCm );
-    }
-
-    private void fixImageViewInHorizon( )
-    {
-        CameraManager cameraManager = ( CameraManager ) getSystemService( CAMERA_SERVICE );
-        try
-        {
-            String cameraId = cameraManager.getCameraIdList( )[0];
-            CameraCharacteristics cameraCharacteristics = cameraManager.getCameraCharacteristics( cameraId );
-            int sensorOrientation = cameraCharacteristics.get( CameraCharacteristics.SENSOR_ORIENTATION );
-            Matrix matrix = new Matrix( );
-            matrix.setRotate( sensorOrientation );
-            imageViewHorizonLine.setImageMatrix( matrix );
-        }
-        catch ( CameraAccessException e )
-        {
-            e.printStackTrace( );
-        }
-    }
-
     private void writeFile( PrintWriter pw, String x, String y, String z ) throws IOException
     {
         pw.println( "X = " + x + " Y = " + y + " Z = " + z );
@@ -714,7 +673,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         float local_progress = general_progress;
         double inclination_angle_level = inclination_angle;
         double starting_velocity = arrow_velocity_settings;
-        double person_height = settings_eye_height_mt;
+        double person_height = mt_settings_eye_height;
         double diameter_of_arrow_meters = settingsArrowDiameter;
         double mass_of_arrow_kilos = settingsArrowMass;
 
@@ -790,74 +749,22 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             starting_time = starting_time + time_step;
         }
 
-        RelativeLayout.LayoutParams red_params = ( RelativeLayout.LayoutParams ) imageViewRed.getLayoutParams( );
-        red_params.topMargin = convert_meters_in_pixels( py_red );
-        imageViewRed.setLayoutParams( red_params );
-
-        RelativeLayout.LayoutParams green_params = ( RelativeLayout.LayoutParams ) imageViewGreen.getLayoutParams( );
-        green_params.topMargin = convert_meters_in_pixels( py_gray );
-        imageViewGreen.setLayoutParams( green_params );
-
-        RelativeLayout.LayoutParams blue_params = ( RelativeLayout.LayoutParams ) imageViewBlue.getLayoutParams( );
-        blue_params.topMargin = convert_meters_in_pixels( py_green );
-        imageViewBlue.setLayoutParams( blue_params );
+        red_aim = py_red;
+        green_aim = py_green;
+        blue_aim = py_gray;
     }
 
-    private int getNavigationBarHeight( )
+    private float getHorizonLine( )
     {
-        DisplayMetrics metrics = new DisplayMetrics( );
-        getWindowManager( ).getDefaultDisplay( ).getMetrics( metrics );
-        int usableHeight = metrics.heightPixels;
-        getWindowManager( ).getDefaultDisplay( ).getRealMetrics( metrics );
-        int realHeight = metrics.heightPixels;
-        if ( realHeight > usableHeight )
-        {
-            return realHeight - usableHeight;
-        }
-        return 0;
-    }
-
-    private int scrHeight( )
-    {
-        DisplayMetrics displayMetrics = new DisplayMetrics( );
-        getWindowManager( ).getDefaultDisplay( ).getMetrics( displayMetrics );
-        return displayMetrics.heightPixels + getNavigationBarHeight( );
-    }
-
-    // 1792
-    private int customGetHeight( ImageView iv )
-    {
-        return iv.getHeight( );
-    }
-
-    // 1792
-    private int customGetMeasuredHeight( ImageView iv )
-    {
-        return iv.getMeasuredHeight( );
-    }
-
-    //1877
-    private int customGetIntrinsicHeight( ImageView iv )
-    {
-        return iv.getDrawable( ).getIntrinsicHeight( );
-    }
-
-    //715
-    private int drawableGetHeight( ImageView iv )
-    {
-        return Math.round( iv.getDrawable( ).getIntrinsicHeight( ) / ( getResources( ).getDisplayMetrics( ).xdpi / DisplayMetrics.DENSITY_DEFAULT ) );
-    }
-
-    //715
-    private int bitmapGetHeight( ImageView iv )
-    {
-        return ( ( BitmapDrawable ) iv.getDrawable( ) ).getBitmap( ).getHeight( );
-    }
-
-    private int convert_meters_in_pixels( double meters )
-    {
-        double lsm = ( lens_size_mt_zoom - lens_size_mt ) / 100 * screenZoomValue + lens_size_mt;
-        return ( int ) -( ( meters - ( tan( inclination_angle * PI / 180 ) * targetDistanceValue + settings_eye_height_mt ) ) * scrHeight( ) / lsm );
+        // h = tan( ( inclination_angle ) * PI / 180 ) * 0.395
+        // px = convert_from_cm_to_px( h ) * screenHeightInCm / ( tan( 60 * PI / 180 ) * 0.395 )
+        float OVERALL_VALUE = 12.f;
+        float PIXELS_PER_DEGREE = 715F / ( 23F * 9F / 16F );
+        float GAUGE_HEIGHT = OVERALL_VALUE * PIXELS_PER_DEGREE;
+        float UNITS_PER_PIXEL = OVERALL_VALUE / GAUGE_HEIGHT;
+        float latherY = ( float ) Math.sin( Math.toRadians( 90 ) );
+        float pixelsAway = ( -headPitch ) / UNITS_PER_PIXEL;
+        return -latherY * pixelsAway;
     }
 
     @Override

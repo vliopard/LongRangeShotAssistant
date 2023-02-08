@@ -8,10 +8,23 @@ import android.graphics.Path;
 import android.graphics.PointF;
 import android.graphics.Rect;
 
+import static org.otdshco.MainActivity.red_aim;
+import static org.otdshco.MainActivity.green_aim;
+import static org.otdshco.MainActivity.blue_aim;
+
+import static org.otdshco.MainActivity.sWidth;
+import static org.otdshco.MainActivity.sHeight;
+
+import static org.otdshco.MainActivity.mt_settings_eye_height;
+import static org.otdshco.MainActivity.targetDistanceValue;
+import static org.otdshco.MainActivity.inclination_angle;
+
+import org.otdshco.Tools;
+
 abstract class SymmetricGauge implements Gauge
 {
-    float MX = 300;
-    float MY = 640;
+    float MX = sWidth / 2F;
+    float MY = sHeight / 2F;
 
     float UNITS_PER_GRADUATION = 3;
     float OVERALL_VALUE; // Overall value the gauge can display in one frame
@@ -34,8 +47,11 @@ abstract class SymmetricGauge implements Gauge
     private final PointF HORIZON_DIR;
     private final float UNITS_PER_PIXEL;
     private final float MARGIN_SPACING; // Spacing between any two adjacent graduations on the gauge (px)
-    private final Paint pathPaint;
     private final Paint textPaint;
+    private final Paint targetPaintR;
+    private final Paint targetPaintG;
+    private final Paint targetPaintB;
+    private final Paint positivePaint;
     private final Paint negativePaint;
     private final float textHeight;
     private final float textWidth;
@@ -50,16 +66,31 @@ abstract class SymmetricGauge implements Gauge
         /* Initialize paint brushes */
         int customColor = Color.RED;
 
-        pathPaint = new Paint( );
-        pathPaint.setColor( customColor );
-        pathPaint.setStrokeWidth( STROKE_WIDTH );
-        pathPaint.setStyle( Paint.Style.STROKE );
-
         textPaint = new Paint( );
         textPaint.setColor( customColor );
         textPaint.setStyle( Paint.Style.FILL );
         textPaint.setTextSize( TEXT_SIZE );
         textPaint.setTextAlign( Paint.Align.CENTER );
+
+        targetPaintG = new Paint( );
+        targetPaintG.setColor( Color.GREEN );
+        targetPaintG.setStrokeWidth( 3 );
+        targetPaintG.setStyle( Paint.Style.STROKE );
+        targetPaintB = new Paint( );
+
+        targetPaintB.setColor( Color.BLUE );
+        targetPaintB.setStrokeWidth( 3 );
+        targetPaintB.setStyle( Paint.Style.STROKE );
+        targetPaintR = new Paint( );
+
+        targetPaintR.setColor( Color.RED );
+        targetPaintR.setStrokeWidth( 3 );
+        targetPaintR.setStyle( Paint.Style.STROKE );
+
+        positivePaint = new Paint( );
+        positivePaint.setColor( customColor );
+        positivePaint.setStrokeWidth( STROKE_WIDTH );
+        positivePaint.setStyle( Paint.Style.STROKE );
 
         negativePaint = new Paint( );
         negativePaint.setColor( customColor );
@@ -127,6 +158,10 @@ abstract class SymmetricGauge implements Gauge
         Path positivePath = new Path( );
         Path negativePath = new Path( );
 
+        Path targetPathR = new Path( );
+        Path targetPathG = new Path( );
+        Path targetPathB = new Path( );
+
         // Estimate the nearest valid value (LOWER than or equal to the current value)
         unitsAway = centerVal % UNITS_PER_GRADUATION == 0 ? 0 : centerVal % UNITS_PER_GRADUATION;
         pixelsAway = unitsAway / UNITS_PER_PIXEL;
@@ -146,7 +181,12 @@ abstract class SymmetricGauge implements Gauge
 
         float x = drawLocation.x - LADDER_DIR.x * pixelsAway;
         float y = drawLocation.y - LADDER_DIR.y * pixelsAway;
+
         drawCrossHairs( positivePath, new PointF( x, y ) );
+
+        drawAim( targetPathR, new PointF( x, y ), red_aim );
+        drawAim( targetPathG, new PointF( x, y ), green_aim );
+        drawAim( targetPathB, new PointF( x, y ), blue_aim );
 
         float temporaryValue;
         PointF p = new PointF( );
@@ -180,8 +220,38 @@ abstract class SymmetricGauge implements Gauge
         y = drawLocation.y - LADDER_DIR.y * pixelsAway;
         drawFlightPath( positivePath, new PointF( x, y ) );
 
-        canvas.drawPath( positivePath, pathPaint );
+        canvas.drawPath( positivePath, positivePaint );
         canvas.drawPath( negativePath, negativePaint );
+
+        canvas.drawPath( targetPathR, targetPaintR );
+        canvas.drawPath( targetPathB, targetPaintB );
+        canvas.drawPath( targetPathG, targetPaintG );
+    }
+
+    private void drawAim( Path path, PointF i, double height )
+    {
+        fix( i );
+
+        float x = i.x;
+        float y = sHeight / 2F;
+
+        double triHeight = Tools.getTriangleHeight( targetDistanceValue, inclination_angle );
+
+        double td = triHeight + ( mt_settings_eye_height - height );
+
+        int pxOnScreen = Tools.getPxOnScreen( td, targetDistanceValue, sHeight );
+
+        y = y + pxOnScreen;
+        // y = y + 58*3;
+        // 1.29m == 58px   @ 3°
+        // 4.64m == 58*2px @ 6°
+        // 9.83m == 58*3px @ 9°
+
+        path.moveTo( x - 16, y );
+        path.lineTo( x - 4, y );
+        path.moveTo( x + 4, y );
+        path.lineTo( x + 16, y );
+        Tools.log( "y[" + y + "] px[" + pxOnScreen + "] height[" + height + "] tri[" + triHeight + "] td[" + td + "]" );
     }
 
     private void drawCrossHairs( Path path, PointF i )

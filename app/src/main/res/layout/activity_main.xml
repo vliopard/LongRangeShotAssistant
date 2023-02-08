@@ -142,27 +142,6 @@
                     app:srcCompat="@drawable/target_aim_reticle" />
 
                 <ImageView
-                    android:id="@+id/imageViewRed"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:contentDescription="@string/no_description"
-                    app:srcCompat="@drawable/target_aim_red" />
-
-                <ImageView
-                    android:id="@+id/imageViewBlue"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:contentDescription="@string/no_description"
-                    app:srcCompat="@drawable/target_aim_blue" />
-
-                <ImageView
-                    android:id="@+id/imageViewGreen"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:contentDescription="@string/no_description"
-                    app:srcCompat="@drawable/target_aim_green" />
-
-                <ImageView
                     android:id="@+id/im_pitch"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"

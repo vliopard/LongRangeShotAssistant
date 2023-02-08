@@ -17,6 +17,9 @@ import org.otdshco.MainActivity;
 import static org.otdshco.MainActivity.headPitch;
 import static org.otdshco.MainActivity.hudParams;
 
+import static org.otdshco.MainActivity.sWidth;
+import static org.otdshco.MainActivity.sHeight;
+
 public class Takeoff extends SurfaceView implements Runnable
 {
     Thread thread = null;
@@ -48,8 +51,7 @@ public class Takeoff extends SurfaceView implements Runnable
         {
             if ( surfaceHolder.getSurface( ).isValid( ) )
             {
-                //Bitmap canvasBitmap = Bitmap.createBitmap( 600, 200, Bitmap.Config.ARGB_8888 );
-                Bitmap canvasBitmap = Bitmap.createBitmap( 600, 1280, Bitmap.Config.ARGB_8888 );
+                Bitmap canvasBitmap = Bitmap.createBitmap( sWidth, sHeight, Bitmap.Config.ARGB_8888 );
                 canvasBitmap.eraseColor( Color.TRANSPARENT );
                 canvas = surfaceHolder.lockCanvas( );
                 canvas.setBitmap( canvasBitmap );
