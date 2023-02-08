@@ -15,7 +15,7 @@ AAC is a software application that simulates crosshair reticle from sniper scope
 
 ## Screenshot
 
-![Aim Assistant](/reference/automatic_aim_assistant?raw=true "Applicatin Screenshot")
+![Aim Assistant](/reference/automatic_aim_assistant.png?raw=true "Applicatin Screenshot")
 
 ## License
 
