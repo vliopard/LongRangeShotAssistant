@@ -86,7 +86,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     private final int REQUEST_CODE_PERMISSIONS = 1001;
     private final String[] REQUIRED_PERMISSIONS = new String[] { "android.permission.CAMERA", "android.permission.WRITE_EXTERNAL_STORAGE" };
 
-    PreviewView mPreviewView;
+    PreviewView cameraPreview;
 
     private Camera camera;
     private CameraInfo cameraInfo;
@@ -95,51 +95,51 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     private int screenZoomValue = 0;
     private VerticalSeekBar verticalSeekBarZoom;
 
-    private float general_progress = 0;
+    private double generalProgress = 0;
     public static volatile float targetDistanceValue = 10;
     private VerticalSeekBar verticalSeekBarTargetDistance;
 
-    private RelativeLayout RelativeLayoutForRotation;
+    private RelativeLayout relativeLayoutForRotation;
 
     private ImageView imageViewHorizonLine;
 
     private TextView textViewForInclinationAngle;
 
-    public static volatile double inclination_angle = 0;
+    public static volatile double inclinationAngle = 0;
 
-    private int back_button_press = 0;
+    private int backButtonPress = 0;
 
     private PrintWriter printWriter;
 
     private int MAX_SAMPLE_SIZE = 5;
-    private float arrow_velocity_settings = 48;
+    private double arrowVelocitySettings = 48;
 
-    public static volatile float mt_settings_eye_height = 1.6F;
+    public static volatile double mtSettingsEyeHeight = 1.6;
 
-    private int image_view_height = 0;
+    private int imageViewHeight = 0;
 
-    private float settingsArrowDiameter = 0.0065F;
-    private float settingsArrowMass = 0.009F;
+    private double settingsArrowDiameter = 0.0065;
+    private double settingsArrowMass = 0.009;
     private boolean settingsAccelerationFormulas = true;
     private boolean settingsGravityFormulas = true;
-    private int lens_factor_settings = 100;
+    private int lensFactorSettings = 100;
 
     public static volatile Params hudParams = new Params( );
-    public static volatile float headPitch = 0.0f;
-    public static volatile double red_aim;
-    public static volatile double green_aim;
-    public static volatile double blue_aim;
+    public static volatile double headPitch = 0;
+    public static volatile double redAim;
+    public static volatile double greenAim;
+    public static volatile double blueAim;
     public static volatile int sWidth = 600;
     public static volatile int sHeight = 1280;
 
     // Based on a measured estimate of the pitch attitude of the FRL of 5 deg and 4.32 deg of Bosch
-    public static final float headPitchBias = 0f; // degrees
+    public static final double headPitchBias = 0; // degrees
 
-    // public static final float headPitchBias = 2.16f; // degrees
-    private final float[] CoeffArray = new float[] { 0.003f, 0.01f, 0.05f };
+    // public static final double headPitchBias = 2.16; // degrees
+    private final double[] coeffArray = new double[] { 0.003, 0.01, 0.05 };
 
     private int indCoeff = 1;
-    public static volatile float FILTER_COEFFICIENT = 0.1f;
+    public static volatile double FILTER_COEFFICIENT = 0.1;
 
     private Takeoff pitchTakeOff = null;
     private SurfaceView pitchSurfaceView;
@@ -176,8 +176,8 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
     private void saveSettings( )
     {
-        SharedPreferences sharedPref = getSharedPreferences( "environment_settings", Context.MODE_PRIVATE );
-        SharedPreferences.Editor editor = sharedPref.edit( );
+        SharedPreferences sharedPreferences = getSharedPreferences( "environment_settings", Context.MODE_PRIVATE );
+        SharedPreferences.Editor editor = sharedPreferences.edit( );
         editor.putInt( "seek_zoom", screenZoomValue );
         editor.putFloat( "seek_distance", targetDistanceValue );
         editor.apply( );
@@ -185,26 +185,26 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
     private void loadSettings( )
     {
-        SharedPreferences settings = getSharedPreferences( "environment_settings", MODE_PRIVATE );
-        MAX_SAMPLE_SIZE = settings.getInt( "sensor_max_samples", 5 );
-        arrow_velocity_settings = settings.getFloat( "arrow_velocity", 48 );
-        mt_settings_eye_height = settings.getFloat( "person_height", 1.6F );
-        settingsArrowDiameter = settings.getFloat( "arrow_diameter", 0.0065F );
-        settingsArrowMass = settings.getFloat( "arrow_mass", 0.009F );
-        settingsAccelerationFormulas = settings.getBoolean( "acceleration_formulas", true );
-        settingsGravityFormulas = settings.getBoolean( "gravity_formulas", true );
-        lens_factor_settings = settings.getInt( "lens_factor", 100 );
-        screenZoomValue = settings.getInt( "seek_zoom", 100 );
-        targetDistanceValue = settings.getFloat( "seek_distance", 0 );
+        SharedPreferences sharedPreferences = getSharedPreferences( "environment_settings", MODE_PRIVATE );
+        MAX_SAMPLE_SIZE = sharedPreferences.getInt( "sensor_max_samples", 5 );
+        arrowVelocitySettings = sharedPreferences.getFloat( "arrow_velocity", 48 );
+        mtSettingsEyeHeight = sharedPreferences.getFloat( "person_height", 1.6F );
+        settingsArrowDiameter = sharedPreferences.getFloat( "arrow_diameter", 0.0065F );
+        settingsArrowMass = sharedPreferences.getFloat( "arrow_mass", 0.009F );
+        settingsAccelerationFormulas = sharedPreferences.getBoolean( "acceleration_formulas", true );
+        settingsGravityFormulas = sharedPreferences.getBoolean( "gravity_formulas", true );
+        lensFactorSettings = sharedPreferences.getInt( "lens_factor", 100 );
+        screenZoomValue = sharedPreferences.getInt( "seek_zoom", 100 );
+        targetDistanceValue = sharedPreferences.getFloat( "seek_distance", 0 );
     }
 
-    private void setIco( int progress, int tens, int ones, VerticalSeekBar seekBar, int drawablePlaceHolder )
+    private void setIco( int progress, int tens, int ones, VerticalSeekBar verticalSeekBar, int drawablePlaceHolder )
     {
         int cen = ( progress % 1000 ) / 100;
         int dez = ( progress % 100 ) / 10;
         int uni = ( progress % 100 ) % 10;
 
-        @SuppressLint ( "UseCompatLoadingForDrawables" ) LayerDrawable bgDrawable = ( LayerDrawable ) getResources( ).getDrawable( drawablePlaceHolder, this.getTheme( ) );
+        @SuppressLint ( "UseCompatLoadingForDrawables" ) LayerDrawable layerDrawable = ( LayerDrawable ) getResources( ).getDrawable( drawablePlaceHolder, this.getTheme( ) );
 
         int pos0;
         if ( cen == 1 )
@@ -216,8 +216,8 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             pos0 = getPos( dez );
         }
 
-        @SuppressLint ( "UseCompatLoadingForDrawables" ) Drawable replace0 = getResources( ).getDrawable( pos0, this.getTheme( ) );
-        bgDrawable.setDrawableByLayerId( tens, replace0 );
+        @SuppressLint ( "UseCompatLoadingForDrawables" ) Drawable drawable = getResources( ).getDrawable( pos0, this.getTheme( ) );
+        layerDrawable.setDrawableByLayerId( tens, drawable );
 
         int pos1;
         if ( cen == 1 )
@@ -229,9 +229,9 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             pos1 = getPos( uni );
         }
 
-        @SuppressLint ( "UseCompatLoadingForDrawables" ) Drawable replace1 = getResources( ).getDrawable( pos1, this.getTheme( ) );
-        bgDrawable.setDrawableByLayerId( ones, replace1 );
-        seekBar.setThumbPlaceholderDrawable( bgDrawable );
+        @SuppressLint ( "UseCompatLoadingForDrawables" ) Drawable drawable1 = getResources( ).getDrawable( pos1, this.getTheme( ) );
+        layerDrawable.setDrawableByLayerId( ones, drawable1 );
+        verticalSeekBar.setThumbPlaceholderDrawable( layerDrawable );
     }
 
     @SuppressLint ( { "WrongViewCast", "UseCompatLoadingForDrawables", "ClickableViewAccessibility" } )
@@ -240,22 +240,22 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     {
         super.onCreate( savedInstanceState );
         getWindow( ).setFlags( WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN );
-        View decorView = getWindow( ).getDecorView( );
+        View view = getWindow( ).getDecorView( );
         int uiOptions = View.SYSTEM_UI_FLAG_HIDE_NAVIGATION | View.SYSTEM_UI_FLAG_FULLSCREEN;
-        decorView.setSystemUiVisibility( uiOptions );
+        view.setSystemUiVisibility( uiOptions );
         setContentView( R.layout.activity_main );
 
-        Button settingsBtn = findViewById( R.id.settings );
-        settingsBtn.setOnClickListener( v -> {
-            Intent i = new Intent( MainActivity.this, Settings.class );
-            startActivity( i );
+        Button button = findViewById( R.id.settings );
+        button.setOnClickListener( v -> {
+            Intent intent = new Intent( MainActivity.this, Settings.class );
+            startActivity( intent );
         } );
 
         pitchSurfaceView = findViewById( R.id.sv_pitch );
         pitchImageView = findViewById( R.id.im_pitch );
 
-        mPreviewView = findViewById( R.id.camera_preview );
-        RelativeLayoutForRotation = findViewById( R.id.rotate_layout );
+        cameraPreview = findViewById( R.id.camera_preview );
+        relativeLayoutForRotation = findViewById( R.id.rotate_layout );
 
         imageViewHorizonLine = findViewById( R.id.aim_level_image );
 
@@ -292,10 +292,10 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             {
                 return true;
             }
-            MeteringPointFactory meteringPointFactory = mPreviewView.createMeteringPointFactory( cameraSelector );
-            float gx = event.getX( );
-            float gy = event.getY( );
-            FocusMeteringAction action = new FocusMeteringAction.Builder( meteringPointFactory.createPoint( gx, gy ) ).build( );
+            MeteringPointFactory meteringPointFactory = cameraPreview.createMeteringPointFactory( cameraSelector );
+            float eventX = event.getX( );
+            float eventY = event.getY( );
+            FocusMeteringAction action = new FocusMeteringAction.Builder( meteringPointFactory.createPoint( eventX, eventY ) ).build( );
             AtomicReference<CameraControl> cameraControl = new AtomicReference<>( camera.getCameraControl( ) );
             cameraControl.get( ).cancelFocusAndMetering( );
             cameraControl.get( ).startFocusAndMetering( action );
@@ -335,7 +335,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         verticalSeekBarTargetDistance.setOnProgressChangeListener( ( progress ) -> {
             targetDistanceValue = progress;
             setIco( progress, R.id.chargingIconLeftDistance, R.id.chargingIconRightDistance, verticalSeekBarTargetDistance, R.drawable.seekbar_distance );
-            general_progress = progress;
+            generalProgress = progress;
             saveSettings( );
             shot( );
             return null;
@@ -345,18 +345,18 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             cameraInfo = camera.getCameraInfo( );
             float scale = Objects.requireNonNull( cameraInfo.getZoomState( ).getValue( ) ).getLinearZoom( );
 
-            float linear_scale = scale * 100;
-            if ( linear_scale < 100 )
+            float linearScale = scale * 100;
+            if ( linearScale < 100 )
             {
-                linear_scale = linear_scale + 1;
+                linearScale = linearScale + 1;
             }
 
-            verticalSeekBarZoom.setProgress( ( int ) linear_scale );
-            screenZoomValue = ( int ) linear_scale;
-            setIco( ( int ) linear_scale, R.id.chargingIconLeftZoom, R.id.chargingIconRightZoom, verticalSeekBarZoom, R.drawable.seekbar_zoom );
+            verticalSeekBarZoom.setProgress( ( int ) linearScale );
+            screenZoomValue = ( int ) linearScale;
+            setIco( ( int ) linearScale, R.id.chargingIconLeftZoom, R.id.chargingIconRightZoom, verticalSeekBarZoom, R.drawable.seekbar_zoom );
 
             AtomicReference<CameraControl> cameraControl = new AtomicReference<>( camera.getCameraControl( ) );
-            cameraControl.get( ).setLinearZoom( linear_scale / 100F );
+            cameraControl.get( ).setLinearZoom( linearScale / 100F );
             saveSettings( );
         } );
 
@@ -364,18 +364,18 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             cameraInfo = camera.getCameraInfo( );
             float scale = Objects.requireNonNull( cameraInfo.getZoomState( ).getValue( ) ).getLinearZoom( );
 
-            float linear_scale = scale * 100;
-            if ( linear_scale > 0 )
+            float linearScale = scale * 100;
+            if ( linearScale > 0 )
             {
-                linear_scale = linear_scale - 1;
+                linearScale = linearScale - 1;
             }
 
-            verticalSeekBarZoom.setProgress( ( int ) linear_scale );
-            screenZoomValue = ( int ) linear_scale;
-            setIco( ( int ) linear_scale, R.id.chargingIconLeftZoom, R.id.chargingIconRightZoom, verticalSeekBarZoom, R.drawable.seekbar_zoom );
+            verticalSeekBarZoom.setProgress( ( int ) linearScale );
+            screenZoomValue = ( int ) linearScale;
+            setIco( ( int ) linearScale, R.id.chargingIconLeftZoom, R.id.chargingIconRightZoom, verticalSeekBarZoom, R.drawable.seekbar_zoom );
 
             AtomicReference<CameraControl> cameraControl = new AtomicReference<>( camera.getCameraControl( ) );
-            cameraControl.get( ).setLinearZoom( linear_scale / 100F );
+            cameraControl.get( ).setLinearZoom( linearScale / 100F );
             saveSettings( );
         } );
 
@@ -389,7 +389,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             targetDistanceValue = progress;
             verticalSeekBarTargetDistance.setProgress( progress );
             setIco( progress, R.id.chargingIconLeftDistance, R.id.chargingIconRightDistance, verticalSeekBarTargetDistance, R.drawable.seekbar_distance );
-            general_progress = progress;
+            generalProgress = progress;
             saveSettings( );
             shot( );
         } );
@@ -405,7 +405,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             targetDistanceValue = progress;
             verticalSeekBarTargetDistance.setProgress( progress );
             setIco( progress, R.id.chargingIconLeftDistance, R.id.chargingIconRightDistance, verticalSeekBarTargetDistance, R.drawable.seekbar_distance );
-            general_progress = progress;
+            generalProgress = progress;
             saveSettings( );
             shot( );
         } );
@@ -425,28 +425,28 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
         if ( Environment.MEDIA_MOUNTED.equals( Environment.getExternalStorageState( ) ) )
         {
-            File outFile = new File( getExternalFilesDir( Environment.DIRECTORY_PICTURES ), fileName );
+            File fileOutputStream = new File( getExternalFilesDir( Environment.DIRECTORY_PICTURES ), fileName );
             try
             {
-                printWriter = new PrintWriter( new FileOutputStream( outFile, true ) );
+                printWriter = new PrintWriter( new FileOutputStream( fileOutputStream, true ) );
             }
-            catch ( FileNotFoundException e )
+            catch ( FileNotFoundException fileNotFoundException )
             {
-                e.printStackTrace( );
+                fileNotFoundException.printStackTrace( );
             }
         }
 
-        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder( ).permitAll( ).build( );
-        StrictMode.setThreadPolicy( policy );
+        StrictMode.ThreadPolicy threadPolicy = new StrictMode.ThreadPolicy.Builder( ).permitAll( ).build( );
+        StrictMode.setThreadPolicy( threadPolicy );
 
         // Set full-screen
-        Window win = getWindow( );
-        WindowManager.LayoutParams winParams = win.getAttributes( );
-        winParams.flags |= WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS;
+        Window window = getWindow( );
+        WindowManager.LayoutParams layoutParams = window.getAttributes( );
+        layoutParams.flags |= WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS;
 
         pitchTakeOff = new Takeoff( this, pitchSurfaceView, pitchImageView );
-        Thread th = new Thread( pitchTakeOff );
-        th.start( );
+        Thread thread = new Thread( pitchTakeOff );
+        thread.start( );
     }
 
     public boolean onTouchEvent( MotionEvent motionEvent )
@@ -486,7 +486,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         }
 
         final ImageCapture imageCapture = builder.setTargetRotation( this.getWindowManager( ).getDefaultDisplay( ).getRotation( ) ).build( );
-        preview.setSurfaceProvider( mPreviewView.createSurfaceProvider( ) );
+        preview.setSurfaceProvider( cameraPreview.createSurfaceProvider( ) );
         camera = cameraProvider.bindToLifecycle( this, cameraSelector, preview, imageAnalysis, imageCapture );
 
         AtomicReference<CameraControl> cameraControl = new AtomicReference<>( camera.getCameraControl( ) );
@@ -496,7 +496,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         setIco( screenZoomValue, R.id.chargingIconLeftZoom, R.id.chargingIconRightZoom, verticalSeekBarZoom, R.drawable.seekbar_zoom );
 
         verticalSeekBarTargetDistance.setProgress( Math.round( targetDistanceValue ) );
-        general_progress = targetDistanceValue;
+        generalProgress = targetDistanceValue;
         shot( );
     }
 
@@ -539,9 +539,9 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         return list;
     }
 
-    public float averageList( List<Double> tallyUp )
+    public double averageList( List<Double> tallyUp )
     {
-        float total = 0;
+        double total = 0;
         for ( Double item : tallyUp )
         {
             total += item;
@@ -563,23 +563,24 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         boolean method = true;
         if ( event.sensor.getType( ) == Sensor.TYPE_ACCELEROMETER )
         {
-            double x, y, z;
+            double xCoordinate;
+            double yCoordinate;
+            double zCoordinate;
             if ( method )
             {
+                double RAD_TO_DEG = 57.295779513082320876798154814105;
                 double ax = event.values[0];
                 double ay = event.values[1];
                 double az = event.values[2];
-                double RAD_TO_DEG = 57.295779513082320876798154814105f;
-                x = ( RAD_TO_DEG * atan( ax / sqrt( ay * ay + az * az ) ) );
-                y = ( RAD_TO_DEG * atan( ay / sqrt( ax * ax + az * az ) ) );
-                z = ( RAD_TO_DEG * atan( az / sqrt( ay * ay + ax * ax ) ) );
-                rollingAverage[0] = roll( rollingAverage[0], x );
-                rollingAverage[1] = roll( rollingAverage[1], y );
-                rollingAverage[2] = roll( rollingAverage[2], z );
-
-                x = averageList( rollingAverage[0] );
-                y = averageList( rollingAverage[1] );
-                z = averageList( rollingAverage[2] );
+                xCoordinate = ( RAD_TO_DEG * atan( ax / sqrt( ay * ay + az * az ) ) );
+                yCoordinate = ( RAD_TO_DEG * atan( ay / sqrt( ax * ax + az * az ) ) );
+                zCoordinate = ( RAD_TO_DEG * atan( az / sqrt( ay * ay + ax * ax ) ) );
+                rollingAverage[0] = roll( rollingAverage[0], xCoordinate );
+                rollingAverage[1] = roll( rollingAverage[1], yCoordinate );
+                rollingAverage[2] = roll( rollingAverage[2], zCoordinate );
+                xCoordinate = averageList( rollingAverage[0] );
+                yCoordinate = averageList( rollingAverage[1] );
+                zCoordinate = averageList( rollingAverage[2] );
             }
             else
             {
@@ -593,34 +594,32 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                 tiltDegrees[0] = Math.toDegrees( Math.asin( accNormalized[0] ) );
                 tiltDegrees[1] = Math.toDegrees( Math.asin( accNormalized[1] ) );
                 tiltDegrees[2] = Math.toDegrees( Math.asin( accNormalized[2] ) );
-                x = tiltDegrees[0];
-                y = tiltDegrees[1];
-                z = tiltDegrees[2];
+                xCoordinate = tiltDegrees[0];
+                yCoordinate = tiltDegrees[1];
+                zCoordinate = tiltDegrees[2];
             }
-            RelativeLayoutForRotation.setRotation( Math.round( x ) );
+            relativeLayoutForRotation.setRotation( Math.round( xCoordinate ) );
 
-            RelativeLayout.LayoutParams params = ( RelativeLayout.LayoutParams ) imageViewHorizonLine.getLayoutParams( );
-            //inclination_angle = ( int ) Math.round( -z );
-            inclination_angle = -z;
-            textViewForInclinationAngle.setText( String.format( getResources( ).getString( R.string.inclination ), -z ) );
+            RelativeLayout.LayoutParams layoutParams = ( RelativeLayout.LayoutParams ) imageViewHorizonLine.getLayoutParams( );
+            //inclination_angle = ( int ) Math.round( -zCoordinate );
+            inclinationAngle = -zCoordinate;
+            textViewForInclinationAngle.setText( String.format( getResources( ).getString( R.string.inclination ), -zCoordinate ) );
 
-            if ( image_view_height == 0 )
+            if ( imageViewHeight == 0 )
             {
-                image_view_height = Tools.customGetIntrinsicHeight( imageViewHorizonLine );
+                imageViewHeight = Tools.customGetIntrinsicHeight( imageViewHorizonLine );
             }
 
-            float iy = getHorizonLine( );
-
-            params.topMargin = ( int ) ( iy );
-            imageViewHorizonLine.setLayoutParams( params );
+            layoutParams.topMargin = ( int ) getHorizonLine( );
+            imageViewHorizonLine.setLayoutParams( layoutParams );
 
             shot( );
 
-            if ( x > 10 || x < -10 || y > 7 || y < -7 )
+            if ( xCoordinate > 10 || xCoordinate < -10 || yCoordinate > 7 || yCoordinate < -7 )
             {
                 try
                 {
-                    writeFile( printWriter, x + "", y + "", z + "" );
+                    writeFile( printWriter, xCoordinate + "", yCoordinate + "", zCoordinate + "" );
                 }
                 catch ( IOException ioException )
                 {
@@ -628,7 +627,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                 }
             }
 
-            float[] android = new float[3];
+            double[] android = new double[3];
             android[0] = -event.values[2];
             android[1] = event.values[0];
             android[2] = -event.values[1];
@@ -639,14 +638,14 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         {
             if ( event.sensor.getType( ) == Sensor.TYPE_ROTATION_VECTOR )
             {
-                float q1 = event.values[0];
-                float q2 = event.values[1];
-                float q3 = event.values[2];
-                float q0 = ( float ) Math.sqrt( 1 - q1 * q1 - q2 * q2 - q3 * q3 ); // Its a unit quaternion
+                double q1 = event.values[0];
+                double q2 = event.values[1];
+                double q3 = event.values[2];
+                double q0 = Math.sqrt( 1 - q1 * q1 - q2 * q2 - q3 * q3 ); // Its a unit quaternion
 
                 // Formulas are obtained from https://en.wikipedia.org/wiki/Conversion_between_quaternions_and_Euler_angles
-                float pitch = ( float ) ( Math.toDegrees( Math.atan2( 2f * ( q0 * q1 + q2 * q3 ), 1f - 2f * ( q1 * q1 + q2 * q2 ) ) ) - 90 );
-                if ( !Float.isNaN( pitch ) )
+                double pitch = Math.toDegrees( Math.atan2( 2f * ( q0 * q1 + q2 * q3 ), 1f - 2f * ( q1 * q1 + q2 * q2 ) ) ) - 90;
+                if ( !Double.isNaN( pitch ) )
                 {
                     headPitch = headPitch + ( pitch - headPitch ) * FILTER_COEFFICIENT;
                 }
@@ -662,10 +661,10 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
     public void onBackPressed( )
     {
-        back_button_press = back_button_press + 1;
+        backButtonPress = backButtonPress + 1;
         printWriter.close( );
         Toast.makeText( MainActivity.this, "Press again to exit", Toast.LENGTH_SHORT ).show( );
-        if ( back_button_press > 1 )
+        if ( backButtonPress > 1 )
         {
             super.onBackPressed( );
         }
@@ -673,100 +672,100 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
     public void shot( )
     {
-        float local_progress = general_progress;
-        double inclination_angle_level = inclination_angle;
-        double starting_velocity = arrow_velocity_settings;
-        double person_height = mt_settings_eye_height;
-        double diameter_of_arrow_meters = settingsArrowDiameter;
-        double mass_of_arrow_kilos = settingsArrowMass;
+        double localProgress = generalProgress;
+        double inclinationAngleLevel = inclinationAngle;
+        double startingVelocity = arrowVelocitySettings;
+        double personHeight = mtSettingsEyeHeight;
+        double diameterOfArrowMeters = settingsArrowDiameter;
+        double massOfArrowKilos = settingsArrowMass;
 
-        double starting_arrow_x0 = 0;
-        double starting_arrow_y_red = person_height;
-        double radius_of_arrow = diameter_of_arrow_meters / 2;
+        double startingArrowX0 = 0;
+        double startingArrowYRed = personHeight;
+        double radiusOfArrow = diameterOfArrowMeters / 2;
 
-        double starting_time = 0;
-        double gravitational_constant = 9.81;
-        double time_step = 0.005;
-        double density_of_air_kg_m3 = 1.2;
+        double startingTime = 0;
+        double gravitationalConstant = 9.81;
+        double timeStep = 0.005;
+        double densityOfAirKgM3 = 1.2;
 
-        double friction = density_of_air_kg_m3 * pow( radius_of_arrow, 2 );
+        double friction = densityOfAirKgM3 * pow( radiusOfArrow, 2 );
 
-        double starting_arrow_y_green = starting_arrow_y_red;
-        double starting_arrow_y_gray = starting_arrow_y_red;
+        double startingArrowYGreen = startingArrowYRed;
+        double startingArrowYGray = startingArrowYRed;
 
-        double starting_velocity_x0 = starting_velocity * cos( toRadians( inclination_angle_level ) );
-        double starting_velocity_sin = starting_velocity * sin( toRadians( inclination_angle_level ) );
-        double starting_velocity_y_red = starting_velocity_sin;
-        double starting_velocity_y_green = starting_velocity_sin;
-        double starting_velocity_y_gray = starting_velocity_sin;
+        double startingVelocityX0 = startingVelocity * cos( toRadians( inclinationAngleLevel ) );
+        double startingVelocitySin = startingVelocity * sin( toRadians( inclinationAngleLevel ) );
+        double startingVelocityYRed = startingVelocitySin;
+        double startingVelocityYGreen = startingVelocitySin;
+        double startingVelocityYGray = startingVelocitySin;
 
-        double drag_coefficient = 9 * 0.3;
-        double cross_sectional_area = PI * pow( ( diameter_of_arrow_meters / 2 ), 2 );
+        double dragCoefficient = 9 * 0.3;
+        double crossSectionalArea = PI * pow( ( diameterOfArrowMeters / 2 ), 2 );
 
-        double py_red = 0;
-        double py_green = 0;
-        double py_gray = 0;
+        double pyRed = 0;
+        double pyGreen = 0;
+        double pyGray = 0;
 
-        while ( starting_arrow_x0 <= local_progress )
+        while ( startingArrowX0 <= localProgress )
         {
-            py_red = starting_arrow_y_red;
-            py_green = starting_arrow_y_green;
-            py_gray = starting_arrow_y_gray;
+            pyRed = startingArrowYRed;
+            pyGreen = startingArrowYGreen;
+            pyGray = startingArrowYGray;
 
-            double total_force = -mass_of_arrow_kilos * gravitational_constant + 0.5 * density_of_air_kg_m3 * cross_sectional_area * drag_coefficient * pow( starting_velocity_y_green, 2 );
+            double totalForce = -massOfArrowKilos * gravitationalConstant + 0.5 * densityOfAirKgM3 * crossSectionalArea * dragCoefficient * pow( startingVelocityYGreen, 2 );
 
-            double acceleration_x;
-            double acceleration_y;
+            double accelerationX;
+            double accelerationY;
 
-            double acceleration = total_force / mass_of_arrow_kilos;
+            double acceleration = totalForce / massOfArrowKilos;
 
             if ( settingsAccelerationFormulas )
             {
-                acceleration_x = acceleration;
-                acceleration_y = acceleration - gravitational_constant;
+                accelerationX = acceleration;
+                accelerationY = acceleration - gravitationalConstant;
             }
             else
             {
-                acceleration_x = -friction * starting_velocity_x0 / mass_of_arrow_kilos;
-                acceleration_y = -friction * starting_velocity_y_red / mass_of_arrow_kilos - gravitational_constant;
+                accelerationX = -friction * startingVelocityX0 / massOfArrowKilos;
+                accelerationY = -friction * startingVelocityYRed / massOfArrowKilos - gravitationalConstant;
             }
 
-            starting_arrow_x0 = starting_arrow_x0 + starting_velocity_x0 * time_step;
-            starting_arrow_y_red = starting_arrow_y_red + starting_velocity_y_red * time_step;
-            starting_arrow_y_green = starting_arrow_y_green + starting_velocity_y_green * time_step;
-            starting_arrow_y_gray = starting_arrow_y_gray + starting_velocity_y_gray * time_step;
+            startingArrowX0 = startingArrowX0 + startingVelocityX0 * timeStep;
+            startingArrowYRed = startingArrowYRed + startingVelocityYRed * timeStep;
+            startingArrowYGreen = startingArrowYGreen + startingVelocityYGreen * timeStep;
+            startingArrowYGray = startingArrowYGray + startingVelocityYGray * timeStep;
 
             if ( settingsGravityFormulas )
             {
-                starting_velocity_x0 = starting_velocity_x0 + acceleration_x * time_step;
+                startingVelocityX0 = startingVelocityX0 + accelerationX * timeStep;
             }
             else
             {
-                starting_velocity_x0 = starting_velocity_x0 - gravitational_constant * time_step;
+                startingVelocityX0 = startingVelocityX0 - gravitationalConstant * timeStep;
             }
 
-            starting_velocity_y_red = starting_velocity_y_red + acceleration_y * time_step;
-            starting_velocity_y_gray = starting_velocity_y_gray - gravitational_constant * time_step;
-            starting_velocity_y_green = starting_velocity_y_green + acceleration * time_step;
+            startingVelocityYRed = startingVelocityYRed + accelerationY * timeStep;
+            startingVelocityYGray = startingVelocityYGray - gravitationalConstant * timeStep;
+            startingVelocityYGreen = startingVelocityYGreen + acceleration * timeStep;
 
-            starting_time = starting_time + time_step;
+            startingTime = startingTime + timeStep;
         }
 
-        red_aim = py_red;
-        green_aim = py_green;
-        blue_aim = py_gray;
+        redAim = pyRed;
+        greenAim = pyGreen;
+        blueAim = pyGray;
     }
 
-    private float getHorizonLine( )
+    private double getHorizonLine( )
     {
         // h = tan( ( inclination_angle ) * PI / 180 ) * 0.395
         // px = convert_from_cm_to_px( h ) * screenHeightInCm / ( tan( 60 * PI / 180 ) * 0.395 )
-        float OVERALL_VALUE = 12.f;
-        float PIXELS_PER_DEGREE = 715F / ( 23F * 9F / 16F );
-        float GAUGE_HEIGHT = OVERALL_VALUE * PIXELS_PER_DEGREE;
-        float UNITS_PER_PIXEL = OVERALL_VALUE / GAUGE_HEIGHT;
-        float latherY = ( float ) Math.sin( Math.toRadians( 90 ) );
-        float pixelsAway = ( -headPitch ) / UNITS_PER_PIXEL;
+        double OVERALL_VALUE = 12.f;
+        double PIXELS_PER_DEGREE = 715F / ( 23F * 9F / 16F );
+        double GAUGE_HEIGHT = OVERALL_VALUE * PIXELS_PER_DEGREE;
+        double UNITS_PER_PIXEL = OVERALL_VALUE / GAUGE_HEIGHT;
+        double latherY = Math.sin( Math.toRadians( 90 ) );
+        double pixelsAway = ( -headPitch ) / UNITS_PER_PIXEL;
         return -latherY * pixelsAway;
     }
 
@@ -781,10 +780,10 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                 if ( action == KeyEvent.ACTION_DOWN )
                 {
                     // Ensure the index is bound within the upper limit
-                    if ( indCoeff < CoeffArray.length - 1 )
+                    if ( indCoeff < coeffArray.length - 1 )
                     {
                         indCoeff = indCoeff + 1;
-                        FILTER_COEFFICIENT = CoeffArray[indCoeff];
+                        FILTER_COEFFICIENT = coeffArray[indCoeff];
                     }
                 }
                 return true;
@@ -795,7 +794,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                     if ( indCoeff > 0 )
                     {
                         indCoeff = indCoeff - 1;
-                        FILTER_COEFFICIENT = CoeffArray[indCoeff];
+                        FILTER_COEFFICIENT = coeffArray[indCoeff];
                     }
                 }
                 return true;
@@ -818,21 +817,21 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         pitchTakeOff.resume( );
     }
 
-    private void estimatePitch( float[] android )
+    private void estimatePitch( double[] android )
     {
-        float androidMag = ( float ) Math.sqrt( android[0] * android[0] + android[1] * android[1] + android[2] * android[2] );
+        double androidMag = Math.sqrt( android[0] * android[0] + android[1] * android[1] + android[2] * android[2] );
         for ( int i = 0; i <= 2; i++ )
         {
             android[i] = android[i] / androidMag;
         }
-        float c0 = android[0] + android[1] + android[2];
-        float v1 = android[2] - android[1];
-        float v2 = android[0] - android[2];
-        float v3 = android[1] - android[0];
-        float R32 = v1 + v2 * v3 / ( 1 + c0 );
-        float R31 = -v2 + v1 * v3 / ( 1 + c0 );
-        float theta = ( float ) Math.toDegrees( Math.asin( R31 / Math.cos( Math.asin( -R32 ) ) ) ) + headPitchBias;
-        if ( !Float.isNaN( theta ) )
+        double c0 = android[0] + android[1] + android[2];
+        double v1 = android[2] - android[1];
+        double v2 = android[0] - android[2];
+        double v3 = android[1] - android[0];
+        double R32 = v1 + v2 * v3 / ( 1 + c0 );
+        double R31 = -v2 + v1 * v3 / ( 1 + c0 );
+        double theta = Math.toDegrees( Math.asin( R31 / Math.cos( Math.asin( -R32 ) ) ) ) + headPitchBias;
+        if ( !Double.isNaN( theta ) )
         {
             headPitch = headPitch + ( theta - headPitch ) * FILTER_COEFFICIENT;
         }

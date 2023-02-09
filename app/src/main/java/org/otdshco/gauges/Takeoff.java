@@ -30,9 +30,9 @@ public class Takeoff extends SurfaceView implements Runnable
     ImageView imageView;
     private final Gauge pitch;
 
-    public Takeoff(Context context, AttributeSet attrs)
+    public Takeoff( Context context, AttributeSet attrs )
     {
-        super(context,attrs);
+        super( context, attrs );
         pitch = new Pitch( );
     }
 
@@ -55,16 +55,16 @@ public class Takeoff extends SurfaceView implements Runnable
                 canvasBitmap.eraseColor( Color.TRANSPARENT );
                 canvas = surfaceHolder.lockCanvas( );
                 canvas.setBitmap( canvasBitmap );
-                this.drawGauges(  hudParams.roll,  headPitch + hudParams.pitch, hudParams.pitch, hudParams.flightPath );
+                this.drawGauges( hudParams.roll, headPitch + hudParams.pitch, hudParams.pitch, hudParams.flightPath );
                 ( ( MainActivity ) getContext( ) ).runOnUiThread( ( ) -> imageView.setImageBitmap( canvasBitmap ) );
                 surfaceHolder.unlockCanvasAndPost( canvas );
             }
         }
     }
 
-    private void drawGauges(  float rollV, float headV, float pitchV, float flightPathV )
+    private void drawGauges( double rollV, double headV, double pitchV, double flightPathV )
     {
-        pitch.draw( canvas, new PointF( getWidth( ) * 0.5f, getHeight( ) * 0.425f ), rollV, headV, pitchV, flightPathV );
+        pitch.draw( canvas, new PointF( getWidth( ) * 0.5f, getHeight( ) * 0.425f ), ( float ) rollV, ( float ) headV, ( float ) pitchV, ( float ) flightPathV );
     }
 
     public void resume( )

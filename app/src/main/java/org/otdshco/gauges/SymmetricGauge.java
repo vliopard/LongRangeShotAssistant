@@ -8,16 +8,16 @@ import android.graphics.Path;
 import android.graphics.PointF;
 import android.graphics.Rect;
 
-import static org.otdshco.MainActivity.red_aim;
-import static org.otdshco.MainActivity.green_aim;
-import static org.otdshco.MainActivity.blue_aim;
+import static org.otdshco.MainActivity.redAim;
+import static org.otdshco.MainActivity.greenAim;
+import static org.otdshco.MainActivity.blueAim;
 
 import static org.otdshco.MainActivity.sWidth;
 import static org.otdshco.MainActivity.sHeight;
 
-import static org.otdshco.MainActivity.mt_settings_eye_height;
+import static org.otdshco.MainActivity.mtSettingsEyeHeight;
 import static org.otdshco.MainActivity.targetDistanceValue;
-import static org.otdshco.MainActivity.inclination_angle;
+import static org.otdshco.MainActivity.inclinationAngle;
 
 import org.otdshco.Tools;
 
@@ -28,7 +28,7 @@ abstract class SymmetricGauge implements Gauge
 
     float UNITS_PER_GRADUATION = 3;
     float OVERALL_VALUE; // Overall value the gauge can display in one frame
-    float LARGER_MARGIN_VAL = 3; // Larger graduation value
+    double LARGER_MARGIN_VAL = 3; // Larger graduation value
     float GAUGE_HEIGHT; // Overall gauge height (px)
 
     float LARGER_MARGIN_LEN = 75; // Larger graduation length, (px)
@@ -131,7 +131,7 @@ abstract class SymmetricGauge implements Gauge
 
     public void draw( Canvas canvas, PointF drawLocation, float... currVals )
     {
-        float theta = currVals[0];
+        double theta = currVals[0];
 
         // Estimate GRAD_DIR and LADDER_DIR
         GRAD_DIR = new PointF( ( float ) Math.cos( Math.toRadians( theta ) ), ( float ) Math.sin( Math.toRadians( theta ) ) );
@@ -165,7 +165,7 @@ abstract class SymmetricGauge implements Gauge
         // Estimate the nearest valid value (LOWER than or equal to the current value)
         unitsAway = centerVal % UNITS_PER_GRADUATION == 0 ? 0 : centerVal % UNITS_PER_GRADUATION;
         pixelsAway = unitsAway / UNITS_PER_PIXEL;
-        float tempVal = centerVal - unitsAway;
+        double tempVal = centerVal - unitsAway;
 
         // Reset the value of location
         location.x = drawLocation.x + LADDER_DIR.x * pixelsAway;
@@ -184,11 +184,11 @@ abstract class SymmetricGauge implements Gauge
 
         drawCrossHairs( positivePath, new PointF( x, y ) );
 
-        drawAim( targetPathR, new PointF( x, y ), red_aim );
-        drawAim( targetPathG, new PointF( x, y ), green_aim );
-        drawAim( targetPathB, new PointF( x, y ), blue_aim );
+        drawAim( targetPathR, new PointF( x, y ), redAim );
+        drawAim( targetPathG, new PointF( x, y ), greenAim );
+        drawAim( targetPathB, new PointF( x, y ), blueAim );
 
-        float temporaryValue;
+        double temporaryValue;
         PointF p = new PointF( );
 
         temporaryValue = 0;
@@ -235,9 +235,9 @@ abstract class SymmetricGauge implements Gauge
         float x = i.x;
         float y = sHeight / 2F;
 
-        double triHeight = Tools.getTriangleHeight( targetDistanceValue, inclination_angle );
+        double triHeight = Tools.getTriangleHeight( targetDistanceValue, inclinationAngle );
 
-        double td = triHeight + ( mt_settings_eye_height - height );
+        double td = triHeight + ( mtSettingsEyeHeight - height );
 
         int pxOnScreen = Tools.getPxOnScreen( td, targetDistanceValue, sHeight );
 
@@ -315,7 +315,7 @@ abstract class SymmetricGauge implements Gauge
         path.addCircle( i.x, i.y, FLIGHT_PATH_RAD, Path.Direction.CCW );
     }
 
-    private void drawMargins( Canvas canvas, Path path, PointF i, float tempVal )
+    private void drawMargins( Canvas canvas, Path path, PointF i, double tempVal )
     {
         fix( i );
 
@@ -402,7 +402,7 @@ abstract class SymmetricGauge implements Gauge
     }
 
     // Update the counter location variable and return the current value
-    private float updateCounter( PointF location, float tempVal, int sign )
+    private double updateCounter( PointF location, double tempVal, int sign )
     {
         location.x = location.x + sign * LADDER_DIR.x * MARGIN_SPACING;
         location.y = location.y + sign * LADDER_DIR.y * MARGIN_SPACING;
