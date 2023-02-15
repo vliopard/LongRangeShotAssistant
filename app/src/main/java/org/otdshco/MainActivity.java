@@ -92,7 +92,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     private CameraInfo cameraInfo;
     private CameraSelector cameraSelector;
 
-    private int screenZoomValue = 0;
+    public static volatile int screenZoomValue = 0;
     private VerticalSeekBar verticalSeekBarZoom;
 
     private double generalProgress = 0;
@@ -144,6 +144,8 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     private Takeoff pitchTakeOff = null;
     private SurfaceView pitchSurfaceView;
     private ImageView pitchImageView;
+
+    public static volatile double cameraFov;
 
     private int getPos( int value )
     {
@@ -468,6 +470,8 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                 Log.e( "START_CAMERA", "EXCEPTION: " + e );
             }
         }, ContextCompat.getMainExecutor( this ) );
+
+        cameraFov = Tools.getFov( this, 1 );
     }
 
     @SuppressLint ( "UnsafeExperimentalUsageError" )
@@ -497,6 +501,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
         verticalSeekBarTargetDistance.setProgress( Math.round( targetDistanceValue ) );
         generalProgress = targetDistanceValue;
+
         shot( );
     }
 

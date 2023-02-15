@@ -16,8 +16,15 @@ import android.util.Log;
 import android.view.WindowManager;
 import android.widget.ImageView;
 
+import static org.otdshco.MainActivity.cameraFov;
+
 public class Tools
 {
+
+    public static double getZoomHeight( double zoom )
+    {
+        return ( 132 * ( zoom - 1 ) / ( -99 ) + 150 ) / 100;
+    }
 
     public static int convertFromCmToPx( double centimeters, double scrHeightInCm, WindowManager windowManager )
     {
@@ -123,7 +130,8 @@ public class Tools
         double mt2cm = 1;
         double factor = 0.021;
 
-        double fov_c1_r = 55.1;
+        double currentFov = cameraFov;
+        double fov_c1_r = 55.1; // 51.17???
         double fov_c2_f = 46.1;
         double fov_c3_r = 88;
         double fov_c4_f = 55.5;
@@ -196,10 +204,52 @@ public class Tools
             matrix.setRotate( sensorOrientation );
             imageView.setImageMatrix( matrix );
         }
-        catch ( CameraAccessException e )
+        catch ( CameraAccessException cameraAccessException )
         {
-            e.printStackTrace( );
+            cameraAccessException.printStackTrace( );
         }
+    }
+
+    public static float getFov( Context context, int cameraId )
+    {
+        try
+        {
+            CameraManager cameraManager = ( CameraManager ) context.getSystemService( CAMERA_SERVICE );
+            CameraCharacteristics cameraCharacteristics = cameraManager.getCameraCharacteristics( cameraManager.getCameraIdList( )[cameraId] );
+            return cameraCharacteristics.get( CameraCharacteristics.LENS_INFO_AVAILABLE_FOCAL_LENGTHS )[0];
+        }
+        catch ( CameraAccessException cameraAccessException )
+        {
+            cameraAccessException.printStackTrace( );
+        }
+        return -1;
+    }
+
+    public static double getOpositeAngle(double height, double distance) {
+        return Math.atan(height / distance);
+    }
+
+    public static double zoomToAngle(double zoom, double max, double min) {
+        double maxZoom = 100;
+        return (((zoom - 1) * (min - max)) / (maxZoom - 1)) + max;
+    }
+
+    public static double getObjectHeight(double angle, double distance) {
+        return distance * Math.tan(angle);
+    }
+
+    public static double toRadians(double grade) {
+        return grade * Math.PI / 180;
+    }
+
+    public static double roundAvoid(double value, int places) {
+        double scale = Math.pow(10, places);
+        return Math.round(value * scale) / scale;
+    }
+
+    public static double trends(double x) {
+        x = 101 - x;
+        return 6E-9 * Math.pow(x, 4) - 1E-6 * Math.pow(x, 3) + 2E-5 * Math.pow(x, 2) + 0.011 * x + 0.149;
     }
 
     public static void log( String message )

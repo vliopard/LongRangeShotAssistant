@@ -17,6 +17,7 @@ import static org.otdshco.MainActivity.sHeight;
 
 import static org.otdshco.MainActivity.mtSettingsEyeHeight;
 import static org.otdshco.MainActivity.targetDistanceValue;
+import static org.otdshco.MainActivity.screenZoomValue;
 import static org.otdshco.MainActivity.inclinationAngle;
 
 import org.otdshco.Tools;
@@ -228,6 +229,11 @@ abstract class SymmetricGauge implements Gauge
         canvas.drawPath( targetPathG, targetPaintG );
     }
 
+    private double convertHeight( double height, double maxHeight, double currentHeight )
+    {
+        return ( height / maxHeight ) * currentHeight;
+    }
+
     private void drawAim( Path path, PointF i, double height )
     {
         fix( i );
@@ -238,6 +244,13 @@ abstract class SymmetricGauge implements Gauge
         double triHeight = Tools.getTriangleHeight( targetDistanceValue, inclinationAngle );
 
         double td = triHeight + ( mtSettingsEyeHeight - height );
+
+        if ( screenZoomValue > 1 )
+        {
+            double maxHeight = Tools.getObjectHeight( Tools.trends( 1 ), targetDistanceValue );
+            double currentHeight = Tools.getObjectHeight( Tools.trends( screenZoomValue ), targetDistanceValue );
+            td = convertHeight( td, maxHeight, currentHeight );
+        }
 
         int pxOnScreen = Tools.getPxOnScreen( td, targetDistanceValue, sHeight );
 
@@ -251,7 +264,7 @@ abstract class SymmetricGauge implements Gauge
         path.lineTo( x - 4, y );
         path.moveTo( x + 4, y );
         path.lineTo( x + 16, y );
-        Tools.log( "y[" + y + "] px[" + pxOnScreen + "] height[" + height + "] tri[" + triHeight + "] td[" + td + "]" );
+        //Tools.log( "y[" + y + "] px[" + pxOnScreen + "] height[" + height + "] tri[" + triHeight + "] td[" + td + "]" );
     }
 
     private void drawCrossHairs( Path path, PointF i )
