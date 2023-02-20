@@ -14,11 +14,10 @@ import android.widget.ImageView;
 
 import org.otdshco.MainActivity;
 
-import static org.otdshco.MainActivity.headPitch;
-import static org.otdshco.MainActivity.hudParams;
-
-import static org.otdshco.MainActivity.sWidth;
-import static org.otdshco.MainActivity.sHeight;
+import static org.otdshco.gauges.Params.headPitch;
+import static org.otdshco.gauges.Params.hudParams;
+import static org.otdshco.gauges.Params.screenWidth;
+import static org.otdshco.gauges.Params.screenHeight;
 
 public class Takeoff extends SurfaceView implements Runnable
 {
@@ -30,17 +29,17 @@ public class Takeoff extends SurfaceView implements Runnable
     ImageView imageView;
     private final Gauge pitch;
 
-    public Takeoff( Context context, AttributeSet attrs )
+    public Takeoff( Context context, AttributeSet attributeSet )
     {
-        super( context, attrs );
+        super( context, attributeSet );
         pitch = new Pitch( );
     }
 
-    public Takeoff( Context context, SurfaceView sView, ImageView iView )
+    public Takeoff( Context context, SurfaceView surfaceView, ImageView imageView )
     {
         super( context );
-        surfaceHolder = sView.getHolder( );
-        imageView = iView;
+        surfaceHolder = surfaceView.getHolder( );
+        this.imageView = imageView;
         pitch = new Pitch( );
     }
 
@@ -51,7 +50,7 @@ public class Takeoff extends SurfaceView implements Runnable
         {
             if ( surfaceHolder.getSurface( ).isValid( ) )
             {
-                Bitmap canvasBitmap = Bitmap.createBitmap( sWidth, sHeight, Bitmap.Config.ARGB_8888 );
+                Bitmap canvasBitmap = Bitmap.createBitmap( screenWidth, screenHeight, Bitmap.Config.ARGB_8888 );
                 canvasBitmap.eraseColor( Color.TRANSPARENT );
                 canvas = surfaceHolder.lockCanvas( );
                 canvas.setBitmap( canvasBitmap );
@@ -64,7 +63,13 @@ public class Takeoff extends SurfaceView implements Runnable
 
     private void drawGauges( double rollV, double headV, double pitchV, double flightPathV )
     {
-        pitch.draw( canvas, new PointF( getWidth( ) * 0.5f, getHeight( ) * 0.425f ), ( float ) rollV, ( float ) headV, ( float ) pitchV, ( float ) flightPathV );
+        //flt width = screenWidth
+        //flt height = screenHeight
+        //flt width = screenWidth * 0.5F // zero
+        //flt height = screenHeight * 0.425F // zero
+        float width = getWidth( ) * 0.5F; // zero
+        float height = getHeight( )* 0.425F; // zero
+        pitch.draw( canvas, new PointF( width, height ), ( float ) rollV, ( float ) headV, ( float ) pitchV, ( float ) flightPathV );
     }
 
     public void resume( )
@@ -84,9 +89,9 @@ public class Takeoff extends SurfaceView implements Runnable
                 thread.join( );
                 thread = null;
             }
-            catch ( InterruptedException e )
+            catch ( InterruptedException interruptedException )
             {
-                e.printStackTrace( );
+                interruptedException.printStackTrace( );
             }
         }
     }

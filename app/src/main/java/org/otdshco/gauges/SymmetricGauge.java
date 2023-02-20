@@ -8,54 +8,63 @@ import android.graphics.Path;
 import android.graphics.PointF;
 import android.graphics.Rect;
 
-import static org.otdshco.MainActivity.redAim;
-import static org.otdshco.MainActivity.greenAim;
-import static org.otdshco.MainActivity.blueAim;
+import static org.otdshco.gauges.Params.CENTER_GAP;
+import static org.otdshco.gauges.Params.CROSS_HAIR_LEN;
+import static org.otdshco.gauges.Params.DASH_FILL_LEN;
+import static org.otdshco.gauges.Params.DASH_GAP_LEN;
+import static org.otdshco.gauges.Params.FLIGHT_PATH_RAD;
+import static org.otdshco.gauges.Params.HORIZON_LEN;
+import static org.otdshco.gauges.Params.LARGER_MARGIN_LEN;
+import static org.otdshco.gauges.Params.LARGER_MARGIN_VAL;
+import static org.otdshco.gauges.Params.STROKE_BOLD_WIDTH;
+import static org.otdshco.gauges.Params.STROKE_WIDTH;
+import static org.otdshco.gauges.Params.TEXT_SIZE;
+import static org.otdshco.gauges.Params.UNITS_PER_GRADUATION;
 
-import static org.otdshco.MainActivity.sWidth;
-import static org.otdshco.MainActivity.sHeight;
+import static org.otdshco.gauges.Params.halfScreenHeight;
+import static org.otdshco.gauges.Params.halfScreenWidth;
+import static org.otdshco.gauges.Params.levels;
 
-import static org.otdshco.MainActivity.mtSettingsEyeHeight;
-import static org.otdshco.MainActivity.targetDistanceValue;
-import static org.otdshco.MainActivity.screenZoomValue;
-import static org.otdshco.MainActivity.inclinationAngle;
+import static org.otdshco.gauges.Params.redAim;
+import static org.otdshco.gauges.Params.greenAim;
+import static org.otdshco.gauges.Params.blueAim;
+
+import static org.otdshco.gauges.Params.constantRightDegrees;
+import static org.otdshco.gauges.Params.screenHeight;
+
+import static org.otdshco.gauges.Params.valuePersonHeight;
+import static org.otdshco.gauges.Params.valueTargetDistance;
+import static org.otdshco.gauges.Params.valueScreenZoom;
+import static org.otdshco.gauges.Params.inclinationAngle;
 
 import org.otdshco.Tools;
 
 abstract class SymmetricGauge implements Gauge
 {
-    float MX = sWidth / 2F;
-    float MY = sHeight / 2F;
-
-    float UNITS_PER_GRADUATION = 3;
-    float OVERALL_VALUE; // Overall value the gauge can display in one frame
-    double LARGER_MARGIN_VAL = 3; // Larger graduation value
-    float GAUGE_HEIGHT; // Overall gauge height (px)
-
-    float LARGER_MARGIN_LEN = 75; // Larger graduation length, (px)
-
-    float HORIZON_LEN = 200; // Horizon length (px)
-    float CENTER_GAP = 20;
-    float DASH_FILL_LEN = 10; // Dash length in dashed line, for negative value (px)
-    float DASH_GAP_LEN = 20;  // Gap in dashed line, for negative value (px)
-    float CROSS_HAIR_LEN = 10;
-    float FLIGHT_PATH_RAD = 5;
     String MAX_TEXT = "XXX"; // Maximum number of digits the gauge can represent
-    int STROKE_WIDTH = 2;
-    int TEXT_SIZE = 20;
-    private PointF GRAD_DIR = new PointF( );
-    private PointF LADDER_DIR = new PointF( );
-    private final PointF HORIZON_DIR;
+
+    float GAUGE_HEIGHT; // Overall gauge height (px)
+    float OVERALL_VALUE; // Overall value the gauge can display in one frame
+
     private final float UNITS_PER_PIXEL;
     private final float MARGIN_SPACING; // Spacing between any two adjacent graduations on the gauge (px)
+
+    private final float textWidth;
+    private final float textHeight;
+
+    private PointF GRAD_DIR = new PointF( );
+    private PointF LADDER_DIR = new PointF( );
+
+    private final PointF HORIZON_DIR;
+
     private final Paint textPaint;
+
     private final Paint targetPaintR;
     private final Paint targetPaintG;
     private final Paint targetPaintB;
+
     private final Paint positivePaint;
     private final Paint negativePaint;
-    private final float textHeight;
-    private final float textWidth;
 
     SymmetricGauge( )
     {
@@ -65,36 +74,34 @@ abstract class SymmetricGauge implements Gauge
         defineGaugeChars( );
 
         /* Initialize paint brushes */
-        int customColor = Color.RED;
-
         textPaint = new Paint( );
-        textPaint.setColor( customColor );
+        textPaint.setColor( Color.RED );
         textPaint.setStyle( Paint.Style.FILL );
         textPaint.setTextSize( TEXT_SIZE );
         textPaint.setTextAlign( Paint.Align.CENTER );
 
         targetPaintG = new Paint( );
         targetPaintG.setColor( Color.GREEN );
-        targetPaintG.setStrokeWidth( 3 );
+        targetPaintG.setStrokeWidth( STROKE_BOLD_WIDTH );
         targetPaintG.setStyle( Paint.Style.STROKE );
         targetPaintB = new Paint( );
 
         targetPaintB.setColor( Color.BLUE );
-        targetPaintB.setStrokeWidth( 3 );
+        targetPaintB.setStrokeWidth( STROKE_BOLD_WIDTH );
         targetPaintB.setStyle( Paint.Style.STROKE );
         targetPaintR = new Paint( );
 
         targetPaintR.setColor( Color.RED );
-        targetPaintR.setStrokeWidth( 3 );
+        targetPaintR.setStrokeWidth( STROKE_BOLD_WIDTH );
         targetPaintR.setStyle( Paint.Style.STROKE );
 
         positivePaint = new Paint( );
-        positivePaint.setColor( customColor );
+        positivePaint.setColor( Color.RED );
         positivePaint.setStrokeWidth( STROKE_WIDTH );
         positivePaint.setStyle( Paint.Style.STROKE );
 
         negativePaint = new Paint( );
-        negativePaint.setColor( customColor );
+        negativePaint.setColor( Color.RED );
         negativePaint.setStrokeWidth( STROKE_WIDTH );
         negativePaint.setStyle( Paint.Style.STROKE );
 
@@ -124,10 +131,10 @@ abstract class SymmetricGauge implements Gauge
     // Must be implemented by the derived class to customize the gauge
     abstract void defineGaugeChars( );
 
-    private void fix( PointF i )
+    private void fix( PointF location )
     {
-        i.x = i.x + MX;
-        i.y = i.y + MY;
+        location.x = location.x + halfScreenWidth;
+        location.y = location.y + halfScreenHeight;
     }
 
     public void draw( Canvas canvas, PointF drawLocation, float... currentValues )
@@ -136,7 +143,7 @@ abstract class SymmetricGauge implements Gauge
 
         // Estimate GRAD_DIR and LADDER_DIR
         GRAD_DIR = new PointF( ( float ) Math.cos( Math.toRadians( theta ) ), ( float ) Math.sin( Math.toRadians( theta ) ) );
-        LADDER_DIR = new PointF( ( float ) Math.cos( Math.toRadians( theta + 90 ) ), ( float ) Math.sin( Math.toRadians( theta + 90 ) ) );
+        LADDER_DIR = new PointF( ( float ) Math.cos( Math.toRadians( theta + constantRightDegrees ) ), ( float ) Math.sin( Math.toRadians( theta + constantRightDegrees ) ) );
 
         float centerValue = currentValues[1];
 
@@ -172,7 +179,8 @@ abstract class SymmetricGauge implements Gauge
         location.x = drawLocation.x + LADDER_DIR.x * pixelsAway;
         location.y = drawLocation.y + LADDER_DIR.y * pixelsAway;
 
-        if ( pixelsAway == 0 ) // Ensure the center graduation is NOT drawn twice
+        // Ensure the center graduation is NOT drawn twice
+        if ( pixelsAway == 0 )
         {
             updateCounter( location, tempVal, +1 );
         }
@@ -195,23 +203,23 @@ abstract class SymmetricGauge implements Gauge
         temporaryValue = 0;
         point.x = xCoordinate;
         point.y = yCoordinate;
-        for ( int i = 0; i < 40; i++ )
+        for ( int i = 0; i < levels; i++ )
         {
             temporaryValue = updateCounter( point, temporaryValue, -1 );
             drawMargins( canvas, positivePath, point, temporaryValue );
-            point.x = point.x - MX;
-            point.y = point.y - MY;
+            point.x = point.x - halfScreenWidth;
+            point.y = point.y - halfScreenHeight;
         }
 
         temporaryValue = 0;
         point.x = xCoordinate;
         point.y = yCoordinate;
-        for ( int i = 0; i < 40; i++ )
+        for ( int i = 0; i < levels; i++ )
         {
             temporaryValue = updateCounter( point, temporaryValue, +1 );
             drawMargins( canvas, negativePath, point, -temporaryValue );
-            point.x = point.x - MX;
-            point.y = point.y - MY;
+            point.x = point.x - halfScreenWidth;
+            point.y = point.y - halfScreenHeight;
         }
 
         float flightPath = currentValues[3];
@@ -233,37 +241,39 @@ abstract class SymmetricGauge implements Gauge
     {
         fix( image );
 
-        float x = image.x;
-        float y = sHeight / 2F;
+        float xValue = image.x;
+        float yValue = halfScreenHeight;
 
-        double triHeight = Tools.getTriangleHeight( targetDistanceValue, inclinationAngle );
+        double triHeight = Tools.getTriangleHeight( valueTargetDistance, inclinationAngle );
 
-        double objectHeight = triHeight + ( mtSettingsEyeHeight - height );
+        double objectHeight = triHeight + ( valuePersonHeight - height );
 
-        if ( screenZoomValue > 1 )
+        if ( valueScreenZoom > 1 )
         {
-            double maxHeight = Tools.getObjectHeight( Tools.trends( 1 ), targetDistanceValue );
-            double currentHeight = Tools.getObjectHeight( Tools.trends( screenZoomValue ), targetDistanceValue );
+            double maxHeight = Tools.getObjectHeight( Tools.trends( 1 ), valueTargetDistance );
+            double currentHeight = Tools.getObjectHeight( Tools.trends( valueScreenZoom ), valueTargetDistance );
             double zoomFactor = currentHeight / maxHeight;
+
             //objectHeight = convertHeight( objectHeight, maxHeight, currentHeight );
+
             Tools.log( "Height[" + objectHeight + "] ZoomFactor[" + zoomFactor + "]" );
             objectHeight = objectHeight / zoomFactor;
             Tools.log( "NewHeight[" + objectHeight + "] ZoomFactor[" + zoomFactor + "]" );
         }
 
-        int pxOnScreen = Tools.getPxOnScreen( objectHeight, targetDistanceValue, sHeight );
+        int pxOnScreen = Tools.getPixelsOnScreen( objectHeight, valueTargetDistance, screenHeight );
 
-        y = y + pxOnScreen;
-        // y = y + 58*3;
+        yValue = yValue + pxOnScreen;
+        // yValue = yValue + 58*3;
         // 1.29m == 58px   @ 3°
         // 4.64m == 58*2px @ 6°
         // 9.83m == 58*3px @ 9°
 
-        path.moveTo( x - 16, y );
-        path.lineTo( x - 4, y );
-        path.moveTo( x + 4, y );
-        path.lineTo( x + 16, y );
-        //Tools.log( "y[" + y + "] px[" + pxOnScreen + "] height[" + height + "] tri[" + triHeight + "] objectHeight[" + objectHeight + "]" );
+        path.moveTo( xValue - 16, yValue );
+        path.lineTo( xValue - 4, yValue );
+        path.moveTo( xValue + 4, yValue );
+        path.lineTo( xValue + 16, yValue );
+        //Tools.log( "yValue[" + yValue + "] px[" + pxOnScreen + "] height[" + height + "] tri[" + triHeight + "] objectHeight[" + objectHeight + "]" );
     }
 
     private void drawCrossHairs( Path path, PointF image )
@@ -272,39 +282,46 @@ abstract class SymmetricGauge implements Gauge
 
         // In positive GRAD direction
         path.moveTo( image.x, image.y );
-        path.lineTo( image.x + GRAD_DIR.x * CROSS_HAIR_LEN, image.y + GRAD_DIR.y * CROSS_HAIR_LEN );
+
+        float xValue = image.x + GRAD_DIR.x * CROSS_HAIR_LEN;
+        float yValue = image.y + GRAD_DIR.y * CROSS_HAIR_LEN;
+        path.lineTo( xValue, yValue );
 
         // In negative GRAD direction
         path.moveTo( image.x, image.y );
-        path.lineTo( image.x - GRAD_DIR.x * CROSS_HAIR_LEN, image.y - GRAD_DIR.y * CROSS_HAIR_LEN );
+        xValue = image.x - GRAD_DIR.x * CROSS_HAIR_LEN;
+        yValue = image.y - GRAD_DIR.y * CROSS_HAIR_LEN;
+        path.lineTo( xValue, yValue );
 
         // In positive LADDER direction
         path.moveTo( image.x, image.y );
-        path.lineTo( image.x + LADDER_DIR.x * CROSS_HAIR_LEN, image.y + LADDER_DIR.y * CROSS_HAIR_LEN );
+        xValue = image.x + LADDER_DIR.x * CROSS_HAIR_LEN;
+        yValue = image.y + LADDER_DIR.y * CROSS_HAIR_LEN;
+        path.lineTo( xValue, yValue );
 
         // In negative LADDER direction
         path.moveTo( image.x, image.y );
-        path.lineTo( image.x - LADDER_DIR.x * CROSS_HAIR_LEN, image.y - LADDER_DIR.y * CROSS_HAIR_LEN );
-
-        float xMovePositive = image.x + HORIZON_DIR.x * CENTER_GAP;
-        float yMovePositive = image.y + HORIZON_DIR.y * CENTER_GAP;
-
-        float xLinePositive = image.x + HORIZON_DIR.x * ( CENTER_GAP + HORIZON_LEN );
-        float yLinePositive = image.y + HORIZON_DIR.y * ( CENTER_GAP + HORIZON_LEN );
+        xValue = image.x - LADDER_DIR.x * CROSS_HAIR_LEN;
+        yValue = image.y - LADDER_DIR.y * CROSS_HAIR_LEN;
+        path.lineTo( xValue, yValue );
 
         // Draw on positive side
-        path.moveTo( xMovePositive, yMovePositive );
-        path.lineTo( xLinePositive, yLinePositive );
+        xValue = image.x + HORIZON_DIR.x * CENTER_GAP;
+        yValue = image.y + HORIZON_DIR.y * CENTER_GAP;
+        path.moveTo( xValue, yValue );
 
-        float xMoveNegative = image.x - HORIZON_DIR.x * CENTER_GAP;
-        float yMoveNegative = image.y - HORIZON_DIR.y * CENTER_GAP;
-
-        float xLineNegative = image.x - HORIZON_DIR.x * ( CENTER_GAP + HORIZON_LEN );
-        float yLineNegative = image.y - HORIZON_DIR.y * ( CENTER_GAP + HORIZON_LEN );
+        xValue = image.x + HORIZON_DIR.x * ( CENTER_GAP + HORIZON_LEN );
+        yValue = image.y + HORIZON_DIR.y * ( CENTER_GAP + HORIZON_LEN );
+        path.lineTo( xValue, yValue );
 
         // Draw on negative side
-        path.moveTo( xMoveNegative, yMoveNegative );
-        path.lineTo( xLineNegative, yLineNegative );
+        xValue = image.x - HORIZON_DIR.x * CENTER_GAP;
+        yValue = image.y - HORIZON_DIR.y * CENTER_GAP;
+        path.moveTo( xValue, yValue );
+
+        xValue = image.x - HORIZON_DIR.x * ( CENTER_GAP + HORIZON_LEN );
+        yValue = image.y - HORIZON_DIR.y * ( CENTER_GAP + HORIZON_LEN );
+        path.lineTo( xValue, yValue );
     }
 
     private void drawFlightPath( Path path, PointF image )
@@ -312,16 +329,31 @@ abstract class SymmetricGauge implements Gauge
         fix( image );
 
         // In positive GRAD direction
-        path.moveTo( image.x + GRAD_DIR.x * FLIGHT_PATH_RAD, image.y + GRAD_DIR.y * FLIGHT_PATH_RAD );
-        path.lineTo( image.x + GRAD_DIR.x * ( FLIGHT_PATH_RAD + CROSS_HAIR_LEN ), image.y + GRAD_DIR.y * ( FLIGHT_PATH_RAD + CROSS_HAIR_LEN ) );
+        float xValue = image.x + GRAD_DIR.x * FLIGHT_PATH_RAD;
+        float yValue = image.y + GRAD_DIR.y * FLIGHT_PATH_RAD;
+        path.moveTo( xValue, yValue );
+
+        xValue = image.x + GRAD_DIR.x * ( FLIGHT_PATH_RAD + CROSS_HAIR_LEN );
+        yValue = image.y + GRAD_DIR.y * ( FLIGHT_PATH_RAD + CROSS_HAIR_LEN );
+        path.lineTo( xValue, yValue );
 
         // In negative GRAD direction
-        path.moveTo( image.x - GRAD_DIR.x * FLIGHT_PATH_RAD, image.y - GRAD_DIR.y * FLIGHT_PATH_RAD );
-        path.lineTo( image.x - GRAD_DIR.x * ( FLIGHT_PATH_RAD + CROSS_HAIR_LEN ), image.y - GRAD_DIR.y * ( FLIGHT_PATH_RAD + CROSS_HAIR_LEN ) );
+        xValue = image.x - GRAD_DIR.x * FLIGHT_PATH_RAD;
+        yValue = image.y - GRAD_DIR.y * FLIGHT_PATH_RAD;
+        path.moveTo( xValue, yValue );
+
+        xValue = image.x - GRAD_DIR.x * ( FLIGHT_PATH_RAD + CROSS_HAIR_LEN );
+        yValue = image.y - GRAD_DIR.y * ( FLIGHT_PATH_RAD + CROSS_HAIR_LEN );
+        path.lineTo( xValue, yValue );
 
         // In negative LADDER direction
-        path.moveTo( image.x - LADDER_DIR.x * FLIGHT_PATH_RAD, image.y - LADDER_DIR.y * FLIGHT_PATH_RAD );
-        path.lineTo( image.x - LADDER_DIR.x * ( FLIGHT_PATH_RAD + CROSS_HAIR_LEN ), image.y - LADDER_DIR.y * ( FLIGHT_PATH_RAD + CROSS_HAIR_LEN ) );
+        xValue = image.x - LADDER_DIR.x * FLIGHT_PATH_RAD;
+        yValue = image.y - LADDER_DIR.y * FLIGHT_PATH_RAD;
+        path.moveTo( xValue, yValue );
+
+        xValue = image.x - LADDER_DIR.x * ( FLIGHT_PATH_RAD + CROSS_HAIR_LEN );
+        yValue = image.y - LADDER_DIR.y * ( FLIGHT_PATH_RAD + CROSS_HAIR_LEN );
+        path.lineTo( xValue, yValue );
 
         // Center circle
         path.addCircle( image.x, image.y, FLIGHT_PATH_RAD, Path.Direction.CCW );
@@ -337,48 +369,46 @@ abstract class SymmetricGauge implements Gauge
         if ( temporaryValue == 0 )
         {
             // Draw horizon line, if the current value is 0
-            float xMovePositive = image.x + HORIZON_DIR.x * CENTER_GAP;
-            float yMovePositive = image.y + HORIZON_DIR.y * CENTER_GAP;
-
-            float xLInePositive = image.x + HORIZON_DIR.x * ( CENTER_GAP + HORIZON_LEN );
-            float yLinePositive = image.y + HORIZON_DIR.y * ( CENTER_GAP + HORIZON_LEN );
-
             // Draw on positive side
-            path.moveTo( xMovePositive, yMovePositive );
-            path.lineTo( xLInePositive, yLinePositive );
+            float xValue = image.x + HORIZON_DIR.x * CENTER_GAP;
+            float yValue = image.y + HORIZON_DIR.y * CENTER_GAP;
+            path.moveTo( xValue, yValue );
 
-            float xMoveNegative = image.x - HORIZON_DIR.x * CENTER_GAP;
-            float yMoveNegative = image.y - HORIZON_DIR.y * CENTER_GAP;
-
-            float xLineNegative = image.x - HORIZON_DIR.x * ( CENTER_GAP + HORIZON_LEN );
-            float yLineNegative = image.y - HORIZON_DIR.y * ( CENTER_GAP + HORIZON_LEN );
+            xValue = image.x + HORIZON_DIR.x * ( CENTER_GAP + HORIZON_LEN );
+            yValue = image.y + HORIZON_DIR.y * ( CENTER_GAP + HORIZON_LEN );
+            path.lineTo( xValue, yValue );
 
             // Draw on negative side
-            path.moveTo( xMoveNegative, yMoveNegative );
-            path.lineTo( xLineNegative, yLineNegative );
+            xValue = image.x - HORIZON_DIR.x * CENTER_GAP;
+            yValue = image.y - HORIZON_DIR.y * CENTER_GAP;
+            path.moveTo( xValue, yValue );
+
+            xValue = image.x - HORIZON_DIR.x * ( CENTER_GAP + HORIZON_LEN );
+            yValue = image.y - HORIZON_DIR.y * ( CENTER_GAP + HORIZON_LEN );
+            path.lineTo( xValue, yValue );
         }
         else
         {
             // Draw larger margin, if the current value is a multiple of LARGER_MARGIN_VAL
             if ( temporaryValue % LARGER_MARGIN_VAL == 0 )
             {
-                float xMovePositive = image.x + GRAD_DIR.x * CENTER_GAP;
-                float yMovePositive = image.y + GRAD_DIR.y * CENTER_GAP;
-                float xLinePositive = image.x + GRAD_DIR.x * ( CENTER_GAP + LARGER_MARGIN_LEN );
-                float yLinePositive = image.y + GRAD_DIR.y * ( CENTER_GAP + LARGER_MARGIN_LEN );
-
                 // Draw on positive side
-                path.moveTo( xMovePositive, yMovePositive );
-                path.lineTo( xLinePositive, yLinePositive );
+                float xValue = image.x + GRAD_DIR.x * CENTER_GAP;
+                float yValue = image.y + GRAD_DIR.y * CENTER_GAP;
+                path.moveTo( xValue, yValue );
 
-                float xMoveNegative = image.x - GRAD_DIR.x * CENTER_GAP;
-                float yMoveNegative = image.y - GRAD_DIR.y * CENTER_GAP;
-                float xLineNegative = image.x - GRAD_DIR.x * ( CENTER_GAP + LARGER_MARGIN_LEN );
-                float yLineNegative = image.y - GRAD_DIR.y * ( CENTER_GAP + LARGER_MARGIN_LEN );
+                xValue = image.x + GRAD_DIR.x * ( CENTER_GAP + LARGER_MARGIN_LEN );
+                yValue = image.y + GRAD_DIR.y * ( CENTER_GAP + LARGER_MARGIN_LEN );
+                path.lineTo( xValue, yValue );
 
                 // Draw on negative side
-                path.moveTo( xMoveNegative, yMoveNegative );
-                path.lineTo( xLineNegative, yLineNegative );
+                xValue = image.x - GRAD_DIR.x * CENTER_GAP;
+                yValue = image.y - GRAD_DIR.y * CENTER_GAP;
+                path.moveTo( xValue, yValue );
+
+                xValue = image.x - GRAD_DIR.x * ( CENTER_GAP + LARGER_MARGIN_LEN );
+                yValue = image.y - GRAD_DIR.y * ( CENTER_GAP + LARGER_MARGIN_LEN );
+                path.lineTo( xValue, yValue );
 
                 // Draw a new line to properly place the text
                 placeText( canvas, image, Integer.toString( ( int ) temporaryValue ) );
@@ -390,30 +420,29 @@ abstract class SymmetricGauge implements Gauge
     {
         Path textPath = new Path( );
 
-        float xMovePositive = image.x + GRAD_DIR.x * ( CENTER_GAP + LARGER_MARGIN_LEN ) + LADDER_DIR.x * textHeight / 2;
-        float yMovePositive = image.y + GRAD_DIR.y * ( CENTER_GAP + LARGER_MARGIN_LEN ) + LADDER_DIR.y * textHeight / 2;
-        float xLinePositive = image.x + GRAD_DIR.x * ( CENTER_GAP + LARGER_MARGIN_LEN + textWidth ) + LADDER_DIR.x * textHeight / 2;
-        float yLinePositive = image.y + GRAD_DIR.y * ( CENTER_GAP + LARGER_MARGIN_LEN + textWidth ) + LADDER_DIR.y * textHeight / 2;
+        float xValue = image.x + GRAD_DIR.x * ( CENTER_GAP + LARGER_MARGIN_LEN ) + LADDER_DIR.x * textHeight / 2;
+        float yValue = image.y + GRAD_DIR.y * ( CENTER_GAP + LARGER_MARGIN_LEN ) + LADDER_DIR.y * textHeight / 2;
+        textPath.moveTo( xValue, yValue );
 
-        textPath.moveTo( xMovePositive, yMovePositive );
-        textPath.lineTo( xLinePositive, yLinePositive );
+        xValue = image.x + GRAD_DIR.x * ( CENTER_GAP + LARGER_MARGIN_LEN + textWidth ) + LADDER_DIR.x * textHeight / 2;
+        yValue = image.y + GRAD_DIR.y * ( CENTER_GAP + LARGER_MARGIN_LEN + textWidth ) + LADDER_DIR.y * textHeight / 2;
+        textPath.lineTo( xValue, yValue );
 
         canvas.drawTextOnPath( string, textPath, 0, 0, textPaint );
 
         textPath.rewind( );
 
-        float xMoveNegative = image.x - GRAD_DIR.x * ( CENTER_GAP + LARGER_MARGIN_LEN + textWidth ) + LADDER_DIR.x * textHeight / 2;
-        float yMoveNegative = image.y - GRAD_DIR.y * ( CENTER_GAP + LARGER_MARGIN_LEN + textWidth ) + LADDER_DIR.y * textHeight / 2;
-        float xLineNegative = image.x - GRAD_DIR.x * ( CENTER_GAP + LARGER_MARGIN_LEN ) + LADDER_DIR.x * textHeight / 2;
-        float yLineNegative = image.y - GRAD_DIR.y * ( CENTER_GAP + LARGER_MARGIN_LEN ) + LADDER_DIR.y * textHeight / 2;
+        xValue = image.x - GRAD_DIR.x * ( CENTER_GAP + LARGER_MARGIN_LEN + textWidth ) + LADDER_DIR.x * textHeight / 2;
+        yValue = image.y - GRAD_DIR.y * ( CENTER_GAP + LARGER_MARGIN_LEN + textWidth ) + LADDER_DIR.y * textHeight / 2;
+        textPath.moveTo( xValue, yValue );
 
-        textPath.moveTo( xMoveNegative, yMoveNegative );
-        textPath.lineTo( xLineNegative, yLineNegative );
+        xValue = image.x - GRAD_DIR.x * ( CENTER_GAP + LARGER_MARGIN_LEN ) + LADDER_DIR.x * textHeight / 2;
+        yValue = image.y - GRAD_DIR.y * ( CENTER_GAP + LARGER_MARGIN_LEN ) + LADDER_DIR.y * textHeight / 2;
+        textPath.lineTo( xValue, yValue );
 
         canvas.drawTextOnPath( string, textPath, 0, 0, textPaint );
     }
 
-    // Update the counter location variable and return the current value
     private double updateCounter( PointF location, double temporaryValue, int sign )
     {
         location.x = location.x + sign * LADDER_DIR.x * MARGIN_SPACING;

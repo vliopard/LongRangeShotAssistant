@@ -1,6 +1,11 @@
 package org.otdshco;
 
 import static android.content.Context.CAMERA_SERVICE;
+import static org.otdshco.gauges.Params.FILTER_COEFFICIENT;
+import static org.otdshco.gauges.Params.cameraFov;
+import static org.otdshco.gauges.Params.headPitch;
+import static org.otdshco.gauges.Params.headPitchBias;
+
 import static java.lang.Math.PI;
 import static java.lang.StrictMath.tan;
 import static java.lang.StrictMath.atan;
@@ -16,11 +21,9 @@ import android.util.Log;
 import android.view.WindowManager;
 import android.widget.ImageView;
 
-//import static org.otdshco.MainActivity.cameraFov;
-
 public class Tools
 {
-    public static double getPxHeightFromInclination( double incAngle )
+    public static double getPixelHeightFromInclination( double incAngle )
     {
         return 170 * incAngle / 3;
     }
@@ -43,10 +46,9 @@ public class Tools
         return 6E-9 * Math.pow( xValue, 4 ) - 1E-6 * Math.pow( xValue, 3 ) + 2E-5 * Math.pow( xValue, 2 ) + 0.011 * xValue + 0.149;
     }
 
-    public static int scrPxHeight( WindowManager windowManager )
+    public static int screenPixelHeight( WindowManager windowManager )
     {
         DisplayMetrics displayMetrics = new DisplayMetrics( );
-        //getWindowManager( ).getDefaultDisplay( ).getMetrics( displayMetrics );
         windowManager.getDefaultDisplay( ).getMetrics( displayMetrics );
         return displayMetrics.heightPixels + getNavigationBarHeight( windowManager );
     }
@@ -58,16 +60,14 @@ public class Tools
         //ret px_screen_center * heightInMeters / 425; // xx/7.5
         //ret px_screen_center * heightInMeters / 510; // 62/9
         //ret px_screen_center * heightInMeters / 680; // 77/12
-        return ( scrPxHeight( windowManager ) / 2F ) * heightInMeters / getPxHeightFromInclination( incAngle );
+        return ( screenPixelHeight( windowManager ) / 2F ) * heightInMeters / getPixelHeightFromInclination( incAngle );
     }
 
     public static int getNavigationBarHeight( WindowManager windowManager )
     {
         DisplayMetrics metrics = new DisplayMetrics( );
-        //getWindowManager( ).getDefaultDisplay( ).getMetrics( metrics );
         windowManager.getDefaultDisplay( ).getMetrics( metrics );
         int usableHeight = metrics.heightPixels;
-        //getWindowManager( ).getDefaultDisplay( ).getRealMetrics( metrics );
         windowManager.getDefaultDisplay( ).getRealMetrics( metrics );
         int realHeight = metrics.heightPixels;
         if ( realHeight > usableHeight )
@@ -77,23 +77,24 @@ public class Tools
         return 0;
     }
 
-    public static int getPxOnScreen( double objectHeight, double objectDistance, int pixelsAmount )
+    public static int getPixelsOnScreen( double objectHeight, double objectDistance, int pixelsAmount )
     {
-        double mt2cm = 1;
-        double factor = 0.021;
-
-        double fov_c1_r = 55.1; // 51.17???
+        // TODO: REVIEW THESE VALUES (FACTOR AND FOV). ARE THEM CORRECT?
+        double metersToCentimeters = 1;
+        double factor = 0.47; //0.021;
+        double fov_c1_r = cameraFov;
         //pub stat vol double cameraFov
         //db currentFov = cameraFov
+        //db fov_c1_r = 55.1
         //db fov_c2_f = 46.1
         //db fov_c3_r = 88
         //db fov_c4_f = 55.5
         //db fov_c5_r = 55.1
 
-        return ( int ) ( pixelsAmount * atan( ( objectHeight * mt2cm ) / ( objectDistance * mt2cm ) ) / ( fov_c1_r * factor ) );
+        return ( int ) ( pixelsAmount * atan( ( objectHeight * metersToCentimeters ) / ( objectDistance * metersToCentimeters ) ) / ( fov_c1_r * factor ) );
     }
 
-    public static float getFov( Context context, int cameraId )
+    public static float getFieldOfView( Context context, int cameraId )
     {
         try
         {
@@ -108,6 +109,25 @@ public class Tools
         return -1;
     }
 
+    public static void estimatePitch( double[] android )
+    {
+        double androidMagnitude = Math.sqrt( android[0] * android[0] + android[1] * android[1] + android[2] * android[2] );
+        for ( int i = 0; i <= 2; i++ )
+        {
+            android[i] = android[i] / androidMagnitude;
+        }
+        double c0 = android[0] + android[1] + android[2];
+        double vector1 = android[2] - android[1];
+        double vector2 = android[0] - android[2];
+        double vector3 = android[1] - android[0];
+        double R32 = vector1 + vector2 * vector3 / ( 1 + c0 );
+        double R31 = -vector2 + vector1 * vector3 / ( 1 + c0 );
+        double theta = Math.toDegrees( Math.asin( R31 / Math.cos( Math.asin( -R32 ) ) ) ) + headPitchBias;
+        if ( !Double.isNaN( theta ) )
+        {
+            headPitch = headPitch + ( theta - headPitch ) * FILTER_COEFFICIENT;
+        }
+    }
 
     public static void log( String message )
     {
@@ -116,7 +136,7 @@ public class Tools
 
     // getMaxPx ()
     // getMaxCm ()
-    public static double getCmToPx( double centimeters, double maxPixels, double maxCentimeters ) { return centimeters * maxPixels / maxCentimeters; }
+    public static double getCentimeterToPixel( double centimeters, double maxPixels, double maxCentimeters ) { return centimeters * maxPixels / maxCentimeters; }
     public static double toRadians( double grade )
     {
         return grade * Math.PI / 180;
@@ -151,14 +171,14 @@ public class Tools
     {
         return magnification * realSize;
     }
-    public double convertHeight( double height, double maxHeight, double currentHeight ) { return ( height / maxHeight ) * currentHeight; }
+    public static double convertHeight( double height, double maxHeight, double currentHeight ) { return ( height / maxHeight ) * currentHeight; }
     public static int bitmapGetHeight( ImageView imageView )
     {
         return ( ( BitmapDrawable ) imageView.getDrawable( ) ).getBitmap( ).getHeight( );
     } // 715
-    public static int convertFromCmToPx( double centimeters, double scrHeightInCm, WindowManager windowManager )
+    public static int convertFromCentimeterToPixel( double centimeters, double scrHeightInCm, WindowManager windowManager )
     {
-        return ( int ) ( centimeters * scrPxHeight( windowManager ) / scrHeightInCm );
+        return ( int ) ( centimeters * screenPixelHeight( windowManager ) / scrHeightInCm );
     }
     public static int drawableGetHeight( ImageView imageView, Context context ) { return Math.round( imageView.getDrawable( ).getIntrinsicHeight( ) / ( context.getResources( ).getDisplayMetrics( ).xdpi / DisplayMetrics.DENSITY_DEFAULT ) ); } // 715
     public static double roundAvoid( double value, int places )
@@ -171,7 +191,7 @@ public class Tools
         double maxZoom = 100;
         return ( ( ( zoom - 1 ) * ( min - max ) ) / ( maxZoom - 1 ) ) + max;
     }
-    public static int scrPxWidth( WindowManager windowManager )
+    public static int screenPixelWidth( WindowManager windowManager )
     {
         DisplayMetrics displayMetrics = new DisplayMetrics( );
         //getWindowManager( ).getDefaultDisplay( ).getMetrics( displayMetrics );
@@ -180,7 +200,7 @@ public class Tools
     }
     public static double getPixels( double heightInMeters, double inclinationAngle, WindowManager windowManager )
     {
-        double screenCenterInPixels = scrPxHeight( windowManager ) / 2F;
+        double screenCenterInPixels = screenPixelHeight( windowManager ) / 2F;
         double maxHeightInMeters = getMeterMax( heightInMeters, inclinationAngle, windowManager );
         //ret heightInMeters * screenCenterInPixels / 8.878494372656393;  // 24/3
         //ret heightInMeters * screenCenterInPixels / 16.32206947655211;  // 44/6
@@ -192,7 +212,7 @@ public class Tools
         }
         return heightInMeters * screenCenterInPixels / maxHeightInMeters;
     }
-    public static double getCmOnScreen( double height, double distance )
+    public static double getCentimetersOnScreen( double height, double distance )
     {
         double metersToCentimeters = 100;
         double factor = 10;
