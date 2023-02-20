@@ -25,6 +25,9 @@ import static org.otdshco.gauges.Params.halfScreenHeight;
 import static org.otdshco.gauges.Params.halfScreenWidth;
 import static org.otdshco.gauges.Params.levels;
 
+import static org.otdshco.gauges.Params.parameter;
+import static org.otdshco.gauges.Params.parameter0;
+import static org.otdshco.gauges.Params.parameter1;
 import static org.otdshco.gauges.Params.redAim;
 import static org.otdshco.gauges.Params.greenAim;
 import static org.otdshco.gauges.Params.blueAim;
@@ -42,12 +45,6 @@ import org.otdshco.Tools;
 abstract class SymmetricGauge implements Gauge
 {
     String MAX_TEXT = "XXX"; // Maximum number of digits the gauge can represent
-
-    float GAUGE_HEIGHT; // Overall gauge height (px)
-    float OVERALL_VALUE; // Overall value the gauge can display in one frame
-
-    private final float UNITS_PER_PIXEL;
-    private final float MARGIN_SPACING; // Spacing between any two adjacent graduations on the gauge (px)
 
     private final float textWidth;
     private final float textHeight;
@@ -118,12 +115,6 @@ abstract class SymmetricGauge implements Gauge
         // Assume the value never goes higher than MAX_TEXT
         textWidth = textPaint.measureText( MAX_TEXT );
 
-        // Initialize all the dependent variables
-        UNITS_PER_PIXEL = OVERALL_VALUE / GAUGE_HEIGHT;
-
-        // MARGIN_SPACING must be an integer, else, there will be round-off error in the final calculations
-        MARGIN_SPACING = GAUGE_HEIGHT / ( OVERALL_VALUE / UNITS_PER_GRADUATION );
-
         // The horizon direction is always leveled
         HORIZON_DIR = new PointF( ( float ) Math.cos( 0 ), ( float ) Math.sin( 0 ) );
     }
@@ -139,6 +130,19 @@ abstract class SymmetricGauge implements Gauge
 
     public void draw( Canvas canvas, PointF drawLocation, float... currentValues )
     {
+
+        if ( valueScreenZoom > 1 )
+        {
+            parameter1 = parameter + ( valueScreenZoom * 9 ); // TODO: BUG FIX - THIS FORMULA IS NOT YET WORKING
+            //parameter0 = parameter1 * 2; // TODO: BUG FIX - THIS FORMULA WILL WORK AS ABOVE
+
+            // TODO: MUST CHECK IF THIS IS AFFECTING THE RGB AIM (PERHAPS THE RGB AIM FORMULA MUST FIT HERE INSTEAD)
+        }
+        else
+        {
+            parameter1 = parameter;
+        }
+
         double theta = currentValues[0];
 
         // Estimate GRAD_DIR and LADDER_DIR
@@ -155,7 +159,7 @@ abstract class SymmetricGauge implements Gauge
         // tempVal = centerValue + unitsAway;
 
         // Estimate the number of pixels to the nearest valid value, e.g. 3 units is 3 units / UNITS_PER_PIXEL away
-        float pixelsAway = unitsAway / UNITS_PER_PIXEL;
+        float pixelsAway = unitsAway / Tools.getUnitsPerPixel( );
 
         // Estimate location of the nearest valid value
         PointF location = new PointF( );
@@ -172,7 +176,7 @@ abstract class SymmetricGauge implements Gauge
 
         // Estimate the nearest valid value (LOWER than or equal to the current value)
         unitsAway = centerValue % UNITS_PER_GRADUATION == 0 ? 0 : centerValue % UNITS_PER_GRADUATION;
-        pixelsAway = unitsAway / UNITS_PER_PIXEL;
+        pixelsAway = unitsAway / Tools.getUnitsPerPixel( );
         double tempVal = centerValue - unitsAway;
 
         // Reset the value of location
@@ -186,7 +190,7 @@ abstract class SymmetricGauge implements Gauge
         }
 
         float pitch = currentValues[2];
-        pixelsAway = ( pitch - centerValue ) / UNITS_PER_PIXEL;
+        pixelsAway = ( pitch - centerValue ) / Tools.getUnitsPerPixel( );
 
         float xCoordinate = drawLocation.x - LADDER_DIR.x * pixelsAway;
         float yCoordinate = drawLocation.y - LADDER_DIR.y * pixelsAway;
@@ -223,7 +227,7 @@ abstract class SymmetricGauge implements Gauge
         }
 
         float flightPath = currentValues[3];
-        pixelsAway = ( flightPath - centerValue ) / UNITS_PER_PIXEL;
+        pixelsAway = ( flightPath - centerValue ) / Tools.getUnitsPerPixel( );
 
         xCoordinate = drawLocation.x - LADDER_DIR.x * pixelsAway;
         yCoordinate = drawLocation.y - LADDER_DIR.y * pixelsAway;
@@ -273,7 +277,6 @@ abstract class SymmetricGauge implements Gauge
         path.lineTo( xValue - 4, yValue );
         path.moveTo( xValue + 4, yValue );
         path.lineTo( xValue + 16, yValue );
-        //Tools.log( "yValue[" + yValue + "] px[" + pxOnScreen + "] height[" + height + "] tri[" + triHeight + "] objectHeight[" + objectHeight + "]" );
     }
 
     private void drawCrossHairs( Path path, PointF image )
@@ -445,8 +448,8 @@ abstract class SymmetricGauge implements Gauge
 
     private double updateCounter( PointF location, double temporaryValue, int sign )
     {
-        location.x = location.x + sign * LADDER_DIR.x * MARGIN_SPACING;
-        location.y = location.y + sign * LADDER_DIR.y * MARGIN_SPACING;
-        return ( temporaryValue - sign * ( MARGIN_SPACING * UNITS_PER_PIXEL ) );
+        location.x = location.x + sign * LADDER_DIR.x * Tools.getMarginSpacing( );
+        location.y = location.y + sign * LADDER_DIR.y * Tools.getMarginSpacing( );
+        return ( temporaryValue - sign * ( Tools.getMarginSpacing( ) * Tools.getUnitsPerPixel( ) ) );
     }
 }

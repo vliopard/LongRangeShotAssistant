@@ -63,12 +63,8 @@ public class Takeoff extends SurfaceView implements Runnable
 
     private void drawGauges( double rollV, double headV, double pitchV, double flightPathV )
     {
-        //flt width = screenWidth
-        //flt height = screenHeight
-        //flt width = screenWidth * 0.5F // zero
-        //flt height = screenHeight * 0.425F // zero
         float width = getWidth( ) * 0.5F; // zero
-        float height = getHeight( )* 0.425F; // zero
+        float height = getHeight( ) * 0.425F; // zero
         pitch.draw( canvas, new PointF( width, height ), ( float ) rollV, ( float ) headV, ( float ) pitchV, ( float ) flightPathV );
     }
 

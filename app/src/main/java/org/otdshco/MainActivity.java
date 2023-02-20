@@ -469,6 +469,9 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             }
         }
 
+        //screenWidth = Tools.screenPixelWidth( this.getWindowManager( ) );
+        screenHeight = Tools.screenPixelHeight( this.getWindowManager( ) );
+
         StrictMode.ThreadPolicy threadPolicy = new StrictMode.ThreadPolicy.Builder( ).permitAll( ).build( );
         StrictMode.setThreadPolicy( threadPolicy );
 
@@ -481,8 +484,6 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         Thread thread = new Thread( pitchTakeOff );
         thread.start( );
 
-        //screenWidth = Tools.screenPixelWidth( this.getWindowManager( ) );
-        screenHeight = Tools.screenPixelHeight( this.getWindowManager( ) );
     }
 
     public boolean onTouchEvent( MotionEvent motionEvent )

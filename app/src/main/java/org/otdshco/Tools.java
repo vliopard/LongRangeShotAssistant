@@ -2,9 +2,15 @@ package org.otdshco;
 
 import static android.content.Context.CAMERA_SERVICE;
 import static org.otdshco.gauges.Params.FILTER_COEFFICIENT;
+import static org.otdshco.gauges.Params.UNITS_PER_GRADUATION;
 import static org.otdshco.gauges.Params.cameraFov;
 import static org.otdshco.gauges.Params.headPitch;
 import static org.otdshco.gauges.Params.headPitchBias;
+import static org.otdshco.gauges.Params.overallValueGaugeDisplayOnFrame;
+import static org.otdshco.gauges.Params.parameter1;
+import static org.otdshco.gauges.Params.parameter2;
+import static org.otdshco.gauges.Params.parameter3;
+import static org.otdshco.gauges.Params.parameter4;
 
 import static java.lang.Math.PI;
 import static java.lang.StrictMath.tan;
@@ -128,6 +134,9 @@ public class Tools
             headPitch = headPitch + ( theta - headPitch ) * FILTER_COEFFICIENT;
         }
     }
+    public static float getGaugeHeight() { return overallValueGaugeDisplayOnFrame * (parameter1 / ( parameter2 * parameter3 / parameter4 )); }
+    public static float getMarginSpacing() { return getGaugeHeight() / ( overallValueGaugeDisplayOnFrame / UNITS_PER_GRADUATION ); }
+    public static float getUnitsPerPixel() { return overallValueGaugeDisplayOnFrame / getGaugeHeight(); }
 
     public static void log( String message )
     {

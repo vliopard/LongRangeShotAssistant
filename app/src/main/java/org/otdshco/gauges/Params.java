@@ -3,20 +3,20 @@ package org.otdshco.gauges;
 public class Params
 {
     // TODO: GET SCREEN VALUES FROM SETTINGS
-    public static final int TEXT_SIZE = 30;
-    public static final int STROKE_WIDTH = 1;
-    public static final int STROKE_BOLD_WIDTH = 3;
+    public static int TEXT_SIZE = 30;
+    public static int STROKE_WIDTH = 1;
+    public static int STROKE_BOLD_WIDTH = 3;
 
-    public static final float CENTER_GAP = 50;
-    public static final float HORIZON_LEN = 300; // Horizon length (px)
-    public static final float DASH_GAP_LEN = 20;  // Gap in dashed line, for negative value (px)
-    public static final float DASH_FILL_LEN = 20; // Dash length in dashed line, for negative value (px)
-    public static final float CROSS_HAIR_LEN = 15;
-    public static final float FLIGHT_PATH_RAD = 10;
-    public static final float LARGER_MARGIN_LEN = 200; // Larger graduation length, (px)
-    public static final float UNITS_PER_GRADUATION = 3;
+    public static float CENTER_GAP = 50;
+    public static float HORIZON_LEN = 300; // Horizon length (px)
+    public static float DASH_GAP_LEN = 20;  // Gap in dashed line, for negative value (px)
+    public static float DASH_FILL_LEN = 20; // Dash length in dashed line, for negative value (px)
+    public static float CROSS_HAIR_LEN = 15;
+    public static float FLIGHT_PATH_RAD = 10;
+    public static float LARGER_MARGIN_LEN = 200; // Larger graduation length, (px)
+    public static float UNITS_PER_GRADUATION = 3;
 
-    public static final double LARGER_MARGIN_VAL = 3; // Larger graduation value
+    public static double LARGER_MARGIN_VAL = 3; // Larger graduation value
 
     public static int screenWidth = 600;
     public static int screenHeight = 2400; //1280
@@ -25,8 +25,9 @@ public class Params
     public static final float halfScreenHeight = screenHeight / 2F;
 
     // 250F / ( 23F * 9F / 16F )
-    public static final float parameter1 = 250F;
-    public static final float parameter0 = parameter1 * 2;
+    public static float parameter = 250F;
+    public static float parameter1 = parameter;
+    public static float parameter0 = parameter1 * 2;
     public static final float parameter2 = 23F;
     public static final float parameter3 = 9F;
     public static final float parameter4 = 16F;
@@ -63,7 +64,7 @@ public class Params
     public static final String settingsSeekZoom = "seek_zoom";
     public static final String settingsSeekDistance = "seek_distance";
 
-    public static final double valueTimeStep = 0.05; //0.005
+    public static final double valueTimeStep = 0.05; // 0.005
     public static final double constantDensityOfAirKgM3 = 1.2;
     public static final double constantDragCoefficient = 9 * 0.3;
     public static final double constantGravitationalField = 9.81;
