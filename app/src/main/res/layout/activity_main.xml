@@ -22,7 +22,10 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentTop="true"
-                android:text="@string/more" />
+                android:text="@string/more"
+                android:textAlignment="center"
+                android:textSize="16sp"
+                android:textStyle="bold" />
 
             <com.lukelorusso.verticalseekbar.VerticalSeekBar
                 android:id="@+id/zoomSeekBar"
@@ -45,7 +48,10 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentBottom="true"
-                android:text="@string/less" />
+                android:text="@string/less"
+                android:textAlignment="center"
+                android:textSize="16sp"
+                android:textStyle="bold" />
         </RelativeLayout>
 
         <RelativeLayout
@@ -58,7 +64,10 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentTop="true"
-                android:text="@string/more" />
+                android:text="@string/more"
+                android:textAlignment="center"
+                android:textSize="16sp"
+                android:textStyle="bold" />
 
             <com.lukelorusso.verticalseekbar.VerticalSeekBar
                 android:id="@+id/distanceSeekBar"
@@ -81,7 +90,10 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentBottom="true"
-                android:text="@string/less" />
+                android:text="@string/less"
+                android:textAlignment="center"
+                android:textSize="16sp"
+                android:textStyle="bold" />
         </RelativeLayout>
 
         <RelativeLayout

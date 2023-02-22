@@ -19,15 +19,16 @@ public class Params
     public static double LARGER_MARGIN_VAL = 3; // Larger graduation value
 
     public static int screenWidth = 600;
-    public static int screenHeight = 2400; //1280
+    public static int screenHeight = 2400;
 
-    public static final float halfScreenWidth = screenWidth / 2F;
-    public static final float halfScreenHeight = screenHeight / 2F;
+    public static float halfScreenWidth = screenWidth / 2F;
+    public static float halfScreenHeight = screenHeight / 2F;
 
     // 250F / ( 23F * 9F / 16F )
     public static float parameter = 250F;
+    public static float parameter2x = parameter * 2;
     public static float parameter1 = parameter;
-    public static float parameter0 = parameter1 * 2;
+    public static float parameter0 = parameter2x;
     public static final float parameter2 = 23F;
     public static final float parameter3 = 9F;
     public static final float parameter4 = 16F;
@@ -49,7 +50,7 @@ public class Params
     public static final boolean defaultAccelerationFormulas = true;
     public static final boolean defaultGravityFormulas = true;
 
-    public static final int defaultLensFactor = 100;
+    public static final float defaultLensFactor = 2.13F;
 
     public static final String settingsEnvironmentValues = "environment_settings";
     public static final String settingsSensorMaxSamples = "sensor_max_samples";
@@ -64,7 +65,7 @@ public class Params
     public static final String settingsSeekZoom = "seek_zoom";
     public static final String settingsSeekDistance = "seek_distance";
 
-    public static final double valueTimeStep = 0.05; // 0.005
+    public static final double valueTimeStep = 0.005;
     public static final double constantDensityOfAirKgM3 = 1.2;
     public static final double constantDragCoefficient = 9 * 0.3;
     public static final double constantGravitationalField = 9.81;
@@ -88,14 +89,13 @@ public class Params
     public static volatile int valueScreenZoom = defaultSeekZoom;
     public static volatile float valueTargetDistance = defaultSeekDistance;
     public static volatile double valuePersonHeight = defaultPersonHeight;
+    public static volatile double valueLensFactor = defaultLensFactor;
     public static volatile double inclinationAngle = 0;
     public static volatile double headPitch = 0;
     public static volatile double redAim;
     public static volatile double greenAim;
     public static volatile double blueAim;
     public static volatile double FILTER_COEFFICIENT = 0.1;
-
-    public static volatile double cameraFov;
 
     public double roll = 0;
     public double pitch = 0;

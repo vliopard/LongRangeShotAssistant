@@ -14,11 +14,6 @@ import android.widget.ImageView;
 
 import org.otdshco.MainActivity;
 
-import static org.otdshco.gauges.Params.headPitch;
-import static org.otdshco.gauges.Params.hudParams;
-import static org.otdshco.gauges.Params.screenWidth;
-import static org.otdshco.gauges.Params.screenHeight;
-
 public class Takeoff extends SurfaceView implements Runnable
 {
     Thread thread = null;
@@ -50,11 +45,11 @@ public class Takeoff extends SurfaceView implements Runnable
         {
             if ( surfaceHolder.getSurface( ).isValid( ) )
             {
-                Bitmap canvasBitmap = Bitmap.createBitmap( screenWidth, screenHeight, Bitmap.Config.ARGB_8888 );
+                Bitmap canvasBitmap = Bitmap.createBitmap( Params.screenWidth, Params.screenHeight, Bitmap.Config.ARGB_8888 );
                 canvasBitmap.eraseColor( Color.TRANSPARENT );
                 canvas = surfaceHolder.lockCanvas( );
                 canvas.setBitmap( canvasBitmap );
-                this.drawGauges( hudParams.roll, headPitch + hudParams.pitch, hudParams.pitch, hudParams.flightPath );
+                this.drawGauges( Params.hudParams.roll, Params.headPitch + Params.hudParams.pitch, Params.hudParams.pitch, Params.hudParams.flightPath );
                 ( ( MainActivity ) getContext( ) ).runOnUiThread( ( ) -> imageView.setImageBitmap( canvasBitmap ) );
                 surfaceHolder.unlockCanvasAndPost( canvas );
             }
