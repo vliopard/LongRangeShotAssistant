@@ -332,9 +332,8 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             }
         }
 
-        //screenWidth = Tools.screenPixelWidth( this.getWindowManager( ) );
-        Params.screenHeight = Tools.screenPixelHeight( this.getWindowManager( ) );
-        Params.halfScreenHeight = Params.screenHeight / 2F;
+        // Params_screenHeight = Tools_screenPixelHeight( this_getWindowManager( ) )
+        // Params_halfScreenHeight = Params_screenHeight / 2F
 
         StrictMode.ThreadPolicy threadPolicy = new StrictMode.ThreadPolicy.Builder( ).permitAll( ).build( );
         StrictMode.setThreadPolicy( threadPolicy );
