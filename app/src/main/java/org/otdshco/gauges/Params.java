@@ -26,7 +26,7 @@ public class Params
 
     // 250F / ( 23F * 9F / 16F )
     public static float parameter = 250F;
-    public static float parameter2x = parameter * 2;
+    public static float parameter2x = 800F;
     public static float parameter1 = parameter;
     public static float parameter0 = parameter2x;
     public static final float parameter2 = 23F;

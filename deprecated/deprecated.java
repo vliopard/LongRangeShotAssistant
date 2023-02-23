@@ -140,9 +140,29 @@ public class Deprecated {
     public static int screenPixelWidth( WindowManager windowManager )
     {
         DisplayMetrics displayMetrics = new DisplayMetrics( );
-        //getWindowManager( ).getDefaultDisplay( ).getMetrics( displayMetrics );
         windowManager.getDefaultDisplay( ).getMetrics( displayMetrics );
         return displayMetrics.widthPixels;
+    }
+
+    public static int screenPixelHeight( WindowManager windowManager )
+    {
+        DisplayMetrics displayMetrics = new DisplayMetrics( );
+        windowManager.getDefaultDisplay( ).getMetrics( displayMetrics );
+        return displayMetrics.heightPixels + getNavigationBarHeight( windowManager );
+    }
+	
+    public static int getNavigationBarHeight( WindowManager windowManager )
+    {
+        DisplayMetrics metrics = new DisplayMetrics( );
+        windowManager.getDefaultDisplay( ).getMetrics( metrics );
+        int usableHeight = metrics.heightPixels;
+        windowManager.getDefaultDisplay( ).getRealMetrics( metrics );
+        int realHeight = metrics.heightPixels;
+        if ( realHeight > usableHeight )
+        {
+            return realHeight - usableHeight;
+        }
+        return 0;
     }
 
     public static double getPixels( double heightInMeters, double inclinationAngle )

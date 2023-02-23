@@ -4,9 +4,7 @@ import org.otdshco.gauges.Params;
 
 import android.content.Context;
 import android.content.pm.PackageManager;
-import android.util.DisplayMetrics;
 import android.util.Log;
-import android.view.WindowManager;
 import android.widget.ImageView;
 
 import static java.lang.StrictMath.tan;
@@ -70,27 +68,6 @@ public class Tools
     public static double getZoomFactor( )
     {
         return Tools.getObjectHeight( Tools.trends( Params.valueScreenZoom ), Params.valueTargetDistance, 0 ) / Tools.getObjectHeight( Tools.trends( 1 ), Params.valueTargetDistance, 0 );
-    }
-
-    public static int screenPixelHeight( WindowManager windowManager )
-    {
-        DisplayMetrics displayMetrics = new DisplayMetrics( );
-        windowManager.getDefaultDisplay( ).getMetrics( displayMetrics );
-        return displayMetrics.heightPixels + getNavigationBarHeight( windowManager );
-    }
-
-    public static int getNavigationBarHeight( WindowManager windowManager )
-    {
-        DisplayMetrics metrics = new DisplayMetrics( );
-        windowManager.getDefaultDisplay( ).getMetrics( metrics );
-        int usableHeight = metrics.heightPixels;
-        windowManager.getDefaultDisplay( ).getRealMetrics( metrics );
-        int realHeight = metrics.heightPixels;
-        if ( realHeight > usableHeight )
-        {
-            return realHeight - usableHeight;
-        }
-        return 0;
     }
 
     public static int getPixelsOnScreen( double objectHeight, double objectDistance, int pixelsAmount )
