@@ -57,8 +57,11 @@ public class Settings extends AppCompatActivity
         Switch switchGravity = findViewById( R.id.gravity_formulas );
         editor.putBoolean( Params.settingsGravityFormulas, switchGravity.isChecked( ) );
 
+        Switch switchMethod = findViewById( R.id.sensor_method );
+        editor.putBoolean( Params.settingsSensorMethod, switchMethod.isChecked( ) );
+
         EditText editTextLensFactor = findViewById( R.id.lens_factor );
-        editor.putFloat( Params.settingsLensFactor, Integer.parseInt( editTextLensFactor.getText( ).toString( ) ) );
+        editor.putFloat( Params.settingsLensFactor, Float.parseFloat( editTextLensFactor.getText( ).toString( ) ) );
 
         editor.apply( );
     }
@@ -87,6 +90,9 @@ public class Settings extends AppCompatActivity
 
         Switch editTextGravityFormulas = findViewById( R.id.gravity_formulas );
         editTextGravityFormulas.setChecked( settings.getBoolean( Params.settingsGravityFormulas, Params.defaultGravityFormulas ) );
+
+        Switch editTextSensorMethod = findViewById( R.id.sensor_method );
+        editTextSensorMethod.setChecked( settings.getBoolean( Params.settingsSensorMethod, Params.defaultSensorMethod ) );
 
         EditText editTextLensFactor = findViewById( R.id.lens_factor );
         editTextLensFactor.setText( String.valueOf( settings.getFloat( Params.settingsLensFactor, Params.defaultLensFactor ) ) );

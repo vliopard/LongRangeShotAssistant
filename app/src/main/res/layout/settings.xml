@@ -17,6 +17,7 @@
         android:minHeight="48dp"
         android:text="@string/max_sample_size"
         android:textAlignment="viewEnd"
+        android:textColor="@color/white"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         tools:ignore="LabelFor" />
@@ -32,6 +33,7 @@
         android:minHeight="48dp"
         android:text="@string/arrow_velocity"
         android:textAlignment="viewEnd"
+        android:textColor="@color/white"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/sensor_max_samples"
         tools:ignore="LabelFor" />
@@ -47,6 +49,7 @@
         android:minHeight="48dp"
         android:text="@string/person_height"
         android:textAlignment="viewEnd"
+        android:textColor="@color/white"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/arrow_velocity"
         tools:ignore="LabelFor" />
@@ -63,6 +66,7 @@
         tools:ignore="LabelFor"
         android:minHeight="48dp"
         android:text="@string/arrow_diameter"
+        android:textColor="@color/white"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/person_height" />
 
@@ -77,6 +81,7 @@
         android:minHeight="48dp"
         android:text="@string/arrow_mass"
         android:textAlignment="viewEnd"
+        android:textColor="@color/white"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/arrow_diameter"
         tools:ignore="LabelFor" />
@@ -87,6 +92,7 @@
         android:layout_height="59dp"
         android:layout_marginStart="12dp"
         android:text="@string/acceleration"
+        android:textColor="@color/white"
         android:thumbTint="@color/gray"
         android:trackTint="@color/white"
         app:layout_constraintStart_toStartOf="parent"
@@ -98,10 +104,23 @@
         android:layout_height="59dp"
         android:layout_marginStart="92dp"
         android:text="@string/gravity"
+        android:textColor="@color/white"
         android:thumbTint="@color/gray"
         android:trackTint="@color/white"
         app:layout_constraintStart_toEndOf="@+id/acceleration_formulas"
         app:layout_constraintTop_toBottomOf="@+id/arrow_mass" />
+
+    <Switch
+        android:id="@+id/sensor_method"
+        android:layout_width="96dp"
+        android:layout_height="59dp"
+        android:layout_marginStart="256dp"
+        android:text="@string/method"
+        android:textColor="@color/white"
+        android:thumbTint="@color/gray"
+        android:trackTint="@color/white"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/lens_factor" />
 
     <EditText
         android:id="@+id/lens_factor"
@@ -111,13 +130,14 @@
 
         android:autofillHints="LENS ADJUST FACTOR"
         android:ems="10"
-        android:textAlignment="viewEnd"
         android:inputType="numberDecimal"
-        tools:ignore="LabelFor"
         android:minHeight="48dp"
         android:text="@string/lens_factor"
+        android:textAlignment="viewEnd"
+        android:textColor="@color/white"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/acceleration_formulas" />
+        app:layout_constraintTop_toBottomOf="@+id/acceleration_formulas"
+        tools:ignore="LabelFor" />
 
     <Button
         android:id="@+id/confirm"
@@ -154,7 +174,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/sensor_max_samples"
-        android:textColor="#DDDDDD"
+        android:textColor="@color/white"
         app:layout_constraintStart_toStartOf="@+id/sensor_max_samples"
         app:layout_constraintTop_toTopOf="@+id/sensor_max_samples" />
 
@@ -163,7 +183,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/arrow_initial_velocity_m_s"
-        android:textColor="#DDDDDD"
+        android:textColor="@color/white"
         app:layout_constraintStart_toStartOf="@+id/arrow_velocity"
         app:layout_constraintTop_toBottomOf="@+id/sensor_max_samples" />
 
@@ -172,7 +192,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/eyes_sight_height_m"
-        android:textColor="#DDDDDD"
+        android:textColor="@color/white"
         app:layout_constraintStart_toStartOf="@+id/person_height"
         app:layout_constraintTop_toTopOf="@+id/person_height" />
 
@@ -181,7 +201,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/arrow_diameter_m"
-        android:textColor="#DDDDDD"
+        android:textColor="@color/white"
         app:layout_constraintStart_toStartOf="@+id/arrow_diameter"
         app:layout_constraintTop_toBottomOf="@+id/person_height" />
 
@@ -190,7 +210,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/arrow_mass_weight_kg"
-        android:textColor="#DDDDDD"
+        android:textColor="@color/white"
         app:layout_constraintStart_toStartOf="@+id/arrow_mass"
         app:layout_constraintTop_toTopOf="@+id/arrow_mass" />
 
@@ -199,8 +219,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/lens_adjust_factor"
-        android:textColor="#DDDDDD"
+        android:textColor="@color/white"
         app:layout_constraintStart_toStartOf="@+id/lens_factor"
         app:layout_constraintTop_toTopOf="@+id/lens_factor" />
-
 </androidx.constraintlayout.widget.ConstraintLayout>

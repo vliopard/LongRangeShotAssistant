@@ -9,6 +9,7 @@
     <string name="cancel">Cancel</string>
     <string name="confirm">Confirm</string>
     <string name="gravity">Gravity</string>
+    <string name="method">Method</string>
     <string name="acceleration">Acceleration</string>
     <string name="max_sample_size">5</string>
     <string name="arrow_velocity">48</string>

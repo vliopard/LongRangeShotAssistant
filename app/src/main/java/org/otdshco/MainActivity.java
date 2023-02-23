@@ -117,6 +117,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     private double valueArrowMass = Params.defaultArrowMass;
     private boolean valueAccelerationFormulas = Params.defaultAccelerationFormulas;
     private boolean valueGravityFormulas = Params.defaultGravityFormulas;
+    private boolean valueSensorMethod = Params.defaultSensorMethod;
 
     private int getPosition( int value )
     {
@@ -149,7 +150,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
     private void saveSettings( )
     {
-        SharedPreferences sharedPreferences = getSharedPreferences( "environment_settings", Context.MODE_PRIVATE );
+        SharedPreferences sharedPreferences = getSharedPreferences( Params.settingsEnvironmentValues, Context.MODE_PRIVATE );
         SharedPreferences.Editor editor = sharedPreferences.edit( );
         editor.putInt( Params.settingsSeekZoom, Params.valueScreenZoom );
         editor.putFloat( Params.settingsSeekDistance, Params.valueTargetDistance );
@@ -158,7 +159,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
     private void loadSettings( )
     {
-        SharedPreferences sharedPreferences = getSharedPreferences( Params.settingsEnvironmentValues, MODE_PRIVATE );
+        SharedPreferences sharedPreferences = getSharedPreferences( Params.settingsEnvironmentValues, Context.MODE_PRIVATE );
         Params.valueSensorMaxSample = sharedPreferences.getInt( Params.settingsSensorMaxSamples, Params.defaultSensorMaxSamples );
         valueArrowVelocity = sharedPreferences.getFloat( Params.settingsArrowVelocity, Params.defaultArrowVelocity );
         Params.valuePersonHeight = sharedPreferences.getFloat( Params.settingsPersonHeight, Params.defaultPersonHeight );
@@ -166,6 +167,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         valueArrowMass = sharedPreferences.getFloat( Params.settingsArrowMass, Params.defaultArrowMass );
         valueAccelerationFormulas = sharedPreferences.getBoolean( Params.settingsAccelerationFormulas, Params.defaultAccelerationFormulas );
         valueGravityFormulas = sharedPreferences.getBoolean( Params.settingsGravityFormulas, Params.defaultGravityFormulas );
+        valueSensorMethod = sharedPreferences.getBoolean( Params.settingsSensorMethod, Params.defaultSensorMethod );
         Params.valueScreenZoom = sharedPreferences.getInt( Params.settingsSeekZoom, Params.defaultSeekZoom );
         Params.valueTargetDistance = sharedPreferences.getFloat( Params.settingsSeekDistance, Params.defaultSeekDistance );
         Params.valueLensFactor = sharedPreferences.getFloat( Params.settingsLensFactor, Params.defaultLensFactor );
@@ -327,7 +329,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
         //screenWidth = Tools.screenPixelWidth( this.getWindowManager( ) );
         Params.screenHeight = Tools.screenPixelHeight( this.getWindowManager( ) );
-        Params.halfScreenHeight = Params.screenHeight / 2;
+        Params.halfScreenHeight = Params.screenHeight / 2F;
 
         StrictMode.ThreadPolicy threadPolicy = new StrictMode.ThreadPolicy.Builder( ).permitAll( ).build( );
         StrictMode.setThreadPolicy( threadPolicy );
@@ -491,13 +493,12 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     @Override
     public void onSensorChanged( SensorEvent event )
     {
-        boolean method = true;
         if ( event.sensor.getType( ) == Sensor.TYPE_ACCELEROMETER )
         {
             double xCoordinate;
             double yCoordinate;
             double zCoordinate;
-            if ( method )
+            if ( valueSensorMethod )
             {
                 double xAxis = event.values[0];
                 double yAxis = event.values[1];

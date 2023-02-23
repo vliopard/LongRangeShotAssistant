@@ -49,6 +49,7 @@ public class Params
 
     public static final boolean defaultAccelerationFormulas = true;
     public static final boolean defaultGravityFormulas = true;
+    public static final boolean defaultSensorMethod = true;
 
     public static final float defaultLensFactor = 2.13F;
 
@@ -61,6 +62,7 @@ public class Params
     public static final String settingsAccelerationFormulas = "acceleration_formulas";
     public static final String settingsGravityFormulas = "gravity_formulas";
     public static final String settingsLensFactor = "lens_factor";
+    public static final String settingsSensorMethod = "sensor_method";
 
     public static final String settingsSeekZoom = "seek_zoom";
     public static final String settingsSeekDistance = "seek_distance";
