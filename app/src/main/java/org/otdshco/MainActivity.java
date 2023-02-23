@@ -160,17 +160,21 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     private void loadSettings( )
     {
         SharedPreferences sharedPreferences = getSharedPreferences( Params.settingsEnvironmentValues, Context.MODE_PRIVATE );
-        Params.valueSensorMaxSample = sharedPreferences.getInt( Params.settingsSensorMaxSamples, Params.defaultSensorMaxSamples );
-        valueArrowVelocity = sharedPreferences.getFloat( Params.settingsArrowVelocity, Params.defaultArrowVelocity );
-        Params.valuePersonHeight = sharedPreferences.getFloat( Params.settingsPersonHeight, Params.defaultPersonHeight );
-        valueArrowDiameter = sharedPreferences.getFloat( Params.settingsArrowDiameter, Params.defaultArrowDiameter );
+
         valueArrowMass = sharedPreferences.getFloat( Params.settingsArrowMass, Params.defaultArrowMass );
+        valueArrowVelocity = sharedPreferences.getFloat( Params.settingsArrowVelocity, Params.defaultArrowVelocity );
+        valueArrowDiameter = sharedPreferences.getFloat( Params.settingsArrowDiameter, Params.defaultArrowDiameter );
+
+        Params.valueTargetDistance = sharedPreferences.getFloat( Params.settingsSeekDistance, Params.defaultSeekDistance );
+        Params.valuePersonHeight = sharedPreferences.getFloat( Params.settingsPersonHeight, Params.defaultPersonHeight );
+        Params.valueLensFactor = sharedPreferences.getFloat( Params.settingsLensFactor, Params.defaultLensFactor );
+
+        Params.valueScreenZoom = sharedPreferences.getInt( Params.settingsSeekZoom, Params.defaultSeekZoom );
+        Params.valueSensorMaxSample = sharedPreferences.getInt( Params.settingsSensorMaxSamples, Params.defaultSensorMaxSamples );
+
         valueAccelerationFormulas = sharedPreferences.getBoolean( Params.settingsAccelerationFormulas, Params.defaultAccelerationFormulas );
         valueGravityFormulas = sharedPreferences.getBoolean( Params.settingsGravityFormulas, Params.defaultGravityFormulas );
         valueSensorMethod = sharedPreferences.getBoolean( Params.settingsSensorMethod, Params.defaultSensorMethod );
-        Params.valueScreenZoom = sharedPreferences.getInt( Params.settingsSeekZoom, Params.defaultSeekZoom );
-        Params.valueTargetDistance = sharedPreferences.getFloat( Params.settingsSeekDistance, Params.defaultSeekDistance );
-        Params.valueLensFactor = sharedPreferences.getFloat( Params.settingsLensFactor, Params.defaultLensFactor );
     }
 
     private void setIcon( int progress, int tens, int ones, VerticalSeekBar verticalSeekBar, int drawablePlaceHolder )
@@ -244,6 +248,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         }
         else
         {
+            ActivityCompat.requestPermissions( this, Tools.REQUIRED_PERMISSIONS, Tools.REQUEST_CODE_PERMISSIONS );
             ActivityCompat.requestPermissions( this, Tools.REQUIRED_PERMISSIONS, Tools.REQUEST_CODE_PERMISSIONS );
         }
 

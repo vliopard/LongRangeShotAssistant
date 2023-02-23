@@ -25,7 +25,7 @@ public class Tools
 {
     public static final int REQUEST_CODE_PERMISSIONS = 1001;
 
-    public static final String[] REQUIRED_PERMISSIONS = new String[] { "android.permission.CAMERA", "android.permission.WRITE_EXTERNAL_STORAGE" };
+    public static final String[] REQUIRED_PERMISSIONS = new String[] { "android.permission.CAMERA" };
 
     public static double getObjectHeight( double distance, double angle, int radians )
     {

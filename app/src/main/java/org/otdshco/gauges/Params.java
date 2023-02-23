@@ -43,6 +43,7 @@ public class Params
     public static final int defaultSensorMaxSamples = 5;
 
     public static final float defaultArrowVelocity = 48F;
+    public static final float defaultLensFactor = 2.13F;
     public static final float defaultPersonHeight = 1.6F;
     public static final float defaultArrowDiameter = 0.0065F;
     public static final float defaultArrowMass = 0.009F;
@@ -51,22 +52,22 @@ public class Params
     public static final boolean defaultGravityFormulas = true;
     public static final boolean defaultSensorMethod = true;
 
-    public static final float defaultLensFactor = 2.13F;
+    public static final String settingsEnvironmentValues = "environmentSettings";
+    public static final String settingsSensorMaxSamples = "sensorMaxSamples";
+    public static final String settingsArrowVelocity = "arrowVelocity";
+    public static final String settingsPersonHeight = "personHeight";
+    public static final String settingsArrowDiameter = "arrowDiameter";
+    public static final String settingsArrowMass = "arrowMass";
+    public static final String settingsAccelerationFormulas = "accelerationFormulas";
+    public static final String settingsGravityFormulas = "gravityFormulas";
+    public static final String settingsLensFactor = "lensFactor";
+    public static final String settingsSensorMethod = "sensorMethod";
 
-    public static final String settingsEnvironmentValues = "environment_settings";
-    public static final String settingsSensorMaxSamples = "sensor_max_samples";
-    public static final String settingsArrowVelocity = "arrow_velocity";
-    public static final String settingsPersonHeight = "person_height";
-    public static final String settingsArrowDiameter = "arrow_diameter";
-    public static final String settingsArrowMass = "arrow_mass";
-    public static final String settingsAccelerationFormulas = "acceleration_formulas";
-    public static final String settingsGravityFormulas = "gravity_formulas";
-    public static final String settingsLensFactor = "lens_factor";
-    public static final String settingsSensorMethod = "sensor_method";
+    public static final String settingsSeekZoom = "seekZoom";
+    public static final String settingsSeekDistance = "seekDistance";
 
-    public static final String settingsSeekZoom = "seek_zoom";
-    public static final String settingsSeekDistance = "seek_distance";
-
+    public static final int defaultSeekZoom = 1;
+    public static final float defaultSeekDistance = 10;
     public static final double valueTimeStep = 0.005;
     public static final double constantDensityOfAirKgM3 = 1.2;
     public static final double constantDragCoefficient = 9 * 0.3;
@@ -84,14 +85,12 @@ public class Params
     public static int indCoefficient = 1;
     public static int valueSensorMaxSample = defaultSensorMaxSamples;
 
-    public static int defaultSeekZoom = 1;
-    public static int defaultSeekDistance = 10;
 
     public static volatile Params hudParams = new Params( );
     public static volatile int valueScreenZoom = defaultSeekZoom;
     public static volatile float valueTargetDistance = defaultSeekDistance;
-    public static volatile double valuePersonHeight = defaultPersonHeight;
     public static volatile double valueLensFactor = defaultLensFactor;
+    public static volatile double valuePersonHeight = defaultPersonHeight;
     public static volatile double inclinationAngle = 0;
     public static volatile double headPitch = 0;
     public static volatile double redAim;

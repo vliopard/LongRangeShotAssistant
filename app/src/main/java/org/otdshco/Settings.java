@@ -51,6 +51,9 @@ public class Settings extends AppCompatActivity
         EditText editTextArrowMass = findViewById( R.id.arrow_mass );
         editor.putFloat( Params.settingsArrowMass, Float.parseFloat( editTextArrowMass.getText( ).toString( ) ) );
 
+        EditText editTextLensFactor = findViewById( R.id.lens_factor );
+        editor.putFloat( Params.settingsLensFactor, Float.parseFloat( editTextLensFactor.getText( ).toString( ) ) );
+
         Switch switchAcceleration = findViewById( R.id.acceleration_formulas );
         editor.putBoolean( Params.settingsAccelerationFormulas, switchAcceleration.isChecked( ) );
 
@@ -60,41 +63,39 @@ public class Settings extends AppCompatActivity
         Switch switchMethod = findViewById( R.id.sensor_method );
         editor.putBoolean( Params.settingsSensorMethod, switchMethod.isChecked( ) );
 
-        EditText editTextLensFactor = findViewById( R.id.lens_factor );
-        editor.putFloat( Params.settingsLensFactor, Float.parseFloat( editTextLensFactor.getText( ).toString( ) ) );
-
         editor.apply( );
     }
 
     private void loadSettings( )
     {
-        SharedPreferences settings = getSharedPreferences( Params.settingsEnvironmentValues, MODE_PRIVATE );
+        SharedPreferences sharedPreferences = getSharedPreferences( Params.settingsEnvironmentValues, MODE_PRIVATE );
 
         EditText editTextSensorMaxSamples = findViewById( R.id.sensor_max_samples );
-        editTextSensorMaxSamples.setText( String.valueOf( settings.getInt( Params.settingsSensorMaxSamples, Params.defaultSensorMaxSamples ) ) );
+        editTextSensorMaxSamples.setText( String.valueOf( sharedPreferences.getInt( Params.settingsSensorMaxSamples, Params.defaultSensorMaxSamples ) ) );
 
         EditText editTextArrowVelocity = findViewById( R.id.arrow_velocity );
-        editTextArrowVelocity.setText( String.valueOf( settings.getFloat( Params.settingsArrowVelocity, Params.defaultArrowVelocity ) ) );
+        editTextArrowVelocity.setText( String.valueOf( sharedPreferences.getFloat( Params.settingsArrowVelocity, Params.defaultArrowVelocity ) ) );
 
         EditText editTextPersonHeight = findViewById( R.id.person_height );
-        editTextPersonHeight.setText( String.valueOf( settings.getFloat( Params.settingsPersonHeight, Params.defaultPersonHeight ) ) );
+        editTextPersonHeight.setText( String.valueOf( sharedPreferences.getFloat( Params.settingsPersonHeight, Params.defaultPersonHeight ) ) );
 
         EditText editTextArrowDiameter = findViewById( R.id.arrow_diameter );
-        editTextArrowDiameter.setText( String.valueOf( settings.getFloat( Params.settingsArrowDiameter, Params.defaultArrowDiameter ) ) );
+        editTextArrowDiameter.setText( String.valueOf( sharedPreferences.getFloat( Params.settingsArrowDiameter, Params.defaultArrowDiameter ) ) );
 
         EditText editTextArrowMass = findViewById( R.id.arrow_mass );
-        editTextArrowMass.setText( String.valueOf( settings.getFloat( Params.settingsArrowMass, Params.defaultArrowMass ) ) );
-
-        Switch editTextAccelerationFormulas = findViewById( R.id.acceleration_formulas );
-        editTextAccelerationFormulas.setChecked( settings.getBoolean( Params.settingsAccelerationFormulas, Params.defaultAccelerationFormulas ) );
-
-        Switch editTextGravityFormulas = findViewById( R.id.gravity_formulas );
-        editTextGravityFormulas.setChecked( settings.getBoolean( Params.settingsGravityFormulas, Params.defaultGravityFormulas ) );
-
-        Switch editTextSensorMethod = findViewById( R.id.sensor_method );
-        editTextSensorMethod.setChecked( settings.getBoolean( Params.settingsSensorMethod, Params.defaultSensorMethod ) );
+        editTextArrowMass.setText( String.valueOf( sharedPreferences.getFloat( Params.settingsArrowMass, Params.defaultArrowMass ) ) );
 
         EditText editTextLensFactor = findViewById( R.id.lens_factor );
-        editTextLensFactor.setText( String.valueOf( settings.getFloat( Params.settingsLensFactor, Params.defaultLensFactor ) ) );
+        editTextLensFactor.setText( String.valueOf( sharedPreferences.getFloat( Params.settingsLensFactor, Params.defaultLensFactor ) ) );
+
+        Switch editTextAccelerationFormulas = findViewById( R.id.acceleration_formulas );
+        editTextAccelerationFormulas.setChecked( sharedPreferences.getBoolean( Params.settingsAccelerationFormulas, Params.defaultAccelerationFormulas ) );
+
+        Switch editTextGravityFormulas = findViewById( R.id.gravity_formulas );
+        editTextGravityFormulas.setChecked( sharedPreferences.getBoolean( Params.settingsGravityFormulas, Params.defaultGravityFormulas ) );
+
+        Switch editTextSensorMethod = findViewById( R.id.sensor_method );
+        editTextSensorMethod.setChecked( sharedPreferences.getBoolean( Params.settingsSensorMethod, Params.defaultSensorMethod ) );
+
     }
 }
